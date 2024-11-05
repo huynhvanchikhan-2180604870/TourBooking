@@ -1,0 +1,18 @@
+:root {
+    --primary-color: #B7E0FF;
+    --secondary-color: #FFCFB3;
+    --heading-color: #0b2727;
+    --text-color: #6e7074;
+    --font-name: "Montserrat", sans-serif;
+    --subtitle-font-name: "Island Moments", cursive;
+}
+
+.thank__you span i {
+    font-size: 4rem;
+    color: green;
+}
+
+.thank__you h1 {
+    font-size: 3.6rem;
+    font-family: var(--subtitle-font-name);
+}
