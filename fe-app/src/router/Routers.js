@@ -10,6 +10,7 @@ import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
 import TourHost from "../components/Dashboard/Host/Pages/TourHost";
+import  OrderHistory  from "../pages/OrderHistory";
 
 const Routers = () => {
   return (
@@ -23,6 +24,7 @@ const Routers = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/tours/search" element={<SeachResult />} />
+        <Route path="/orders" element={<OrderHistory />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/dashboard" element={<DashboardHost />} />
         <Route path="/dashboard/tours" element={<TourHost />} />

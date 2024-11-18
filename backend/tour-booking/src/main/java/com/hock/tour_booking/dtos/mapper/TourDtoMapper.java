@@ -36,7 +36,7 @@ public class TourDtoMapper {
         tourDTO.setDepartureDate(tour.getDepartureDate());
         tourDTO.setItinerary(tour.getItinerary());
         tourDTO.setStatus(tour.getStatus());
-        tourDTO.setDestination(tour.getDestination());
+        tourDTO.setDestination(tour.getDestination().getName());
         tourDTO.setStatus(tour.getStatus());
         tourDTO.setImages(tour.getImages());
         tourDTO.setFeatured(tour.isFeatured());

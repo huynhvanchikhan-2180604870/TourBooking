@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Table(name = "reviews")
 public class Review {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @ManyToOne

@@ -57,8 +57,8 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public User updateUser(UUID id, User req) throws Exception{
-        User user = findUserById(id);
+    public User updateUser(User req) throws Exception{
+        User user = findUserById(req.getId());
         if(req.getUsername() != null){
             user.setUsername(req.getUsername());
         }
@@ -66,13 +66,19 @@ public class UserServiceImplementation implements UserService {
         if(req.getEmail() != null){
             user.setEmail(req.getEmail());
         }
+
         if (req.getPhone_number() != null){
             user.setPhone_number(req.getPhone_number());
         }
         if (req.getAddress() != null){
             user.setAddress(req.getAddress());
         }
+
+        if(req.getCin() != null){
+            user.setCin(req.getCin());
+        }
         user.setIs_active(user.getIs_active());
+
         return userRepository.save(user);
     }
 
@@ -94,6 +100,7 @@ public class UserServiceImplementation implements UserService {
         user.setLast_login(req.getLast_login());
         user.getRoles().add(role);
         user.setVerify_code(req.getVerify_code());
+        user.setCin(req.getCin());
         // Lưu người dùng
         User saveUser  = userRepository.save(user);
         System.out.println("User new: " + saveUser.toString());

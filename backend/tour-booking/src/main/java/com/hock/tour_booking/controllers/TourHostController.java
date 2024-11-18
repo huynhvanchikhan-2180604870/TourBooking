@@ -3,16 +3,10 @@ package com.hock.tour_booking.controllers;
 import com.hock.tour_booking.dtos.CategoryDTO;
 import com.hock.tour_booking.dtos.TourDTO;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
-import com.hock.tour_booking.entities.Category;
-import com.hock.tour_booking.entities.Role;
-import com.hock.tour_booking.entities.Tour;
-import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.entities.*;
 import com.hock.tour_booking.repositories.RoleCustomRepo;
 import com.hock.tour_booking.repositories.RoleRepository;
-import com.hock.tour_booking.services.CategoryService;
-import com.hock.tour_booking.services.RoleService;
-import com.hock.tour_booking.services.TourService;
-import com.hock.tour_booking.services.UserService;
+import com.hock.tour_booking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -35,10 +29,18 @@ public class TourHostController {
     private RoleRepository roleRepository;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private DestinationService destinationService;
+
 
     @PostMapping("/create")
     public ResponseEntity<TourDTO>createTour(@RequestBody TourDTO tourDTO, @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
+        Destination currentDestination = destinationService.findByName(tourDTO.getDestination());
+        if (currentDestination == null) {
+            Destination savedestination = destinationService.createDestination(tourDTO.getDestination());
+            currentDestination = savedestination;
+        }
         Category category = categoryService.findById(tourDTO.getCategory());
         List<String> roleNames = null;
         HashSet<Role> roles = new HashSet<>();
@@ -56,7 +58,8 @@ public class TourHostController {
         tour.setTitle(tourDTO.getTitle());
         tour.setDescription(tourDTO.getDescription());
         tour.setPrice(tourDTO.getPrice());
-        tour.setDestination(tourDTO.getDestination());
+
+        tour.setDestination(currentDestination);
         tour.setDepartureDate(tourDTO.getDepartureDate());
         tour.setDurationDays(tourDTO.getDurationDays());
         tour.setItinerary(tourDTO.getItinerary());
@@ -101,7 +104,8 @@ public class TourHostController {
         tour.setTitle(tourDTO.getTitle());
         tour.setDescription(tourDTO.getDescription());
         tour.setPrice(tourDTO.getPrice());
-        tour.setDestination(tourDTO.getDestination());
+        Destination destination = destinationService.findByName(tourDTO.getDestination());
+        tour.setDestination(destination);
         tour.setDepartureDate(tourDTO.getDepartureDate());
         tour.setDurationDays(tourDTO.getDurationDays());
         tour.setItinerary(tourDTO.getItinerary());

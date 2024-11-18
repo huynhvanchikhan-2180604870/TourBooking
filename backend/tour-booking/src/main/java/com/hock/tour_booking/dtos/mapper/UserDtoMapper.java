@@ -20,6 +20,7 @@ public class UserDtoMapper {
         userDTO.setPhone(user.getPhone_number());
         userDTO.setUsername(user.getUsername());
         userDTO.setRoles(setRoleUserToRoleUserDTO(user));
+        userDTO.setCin(user.getCin());
         return userDTO;
     }
 

@@ -1,11 +1,15 @@
 package com.hock.tour_booking.controllers;
 
 import com.hock.tour_booking.dtos.CategoryDTO;
+import com.hock.tour_booking.dtos.DestinationDTO;
 import com.hock.tour_booking.dtos.TourDTO;
+import com.hock.tour_booking.dtos.mapper.DestinationDtoMapper;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
 import com.hock.tour_booking.entities.Category;
+import com.hock.tour_booking.entities.Destination;
 import com.hock.tour_booking.entities.Tour;
 import com.hock.tour_booking.services.CategoryService;
+import com.hock.tour_booking.services.DestinationService;
 import com.hock.tour_booking.services.TourService;
 import com.hock.tour_booking.utils.FilterOption;
 import com.hock.tour_booking.utils.GetFilterOption;
@@ -28,6 +32,9 @@ public class TourController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private DestinationService destinationService;
 //    @GetMapping
 //    public ResponseEntity<List<TourDTO>> getTour() {
 //        List<Tour> tours = tourService.findAllTours();
@@ -67,5 +74,12 @@ public class TourController {
         TourDTO tourDTO = TourDtoMapper.toTourDTO(tour);
         System.out.println("Find tour by id: " + tourDTO);
         return new ResponseEntity<>(tourDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/destinations")
+    public ResponseEntity<List<Destination>> getDestinations(){
+        List<Destination> destinations = destinationService.findAll();
+        List<DestinationDTO> destinationDTOS = DestinationDtoMapper.toDestinationDtos(destinations);
+        return new ResponseEntity<>(destinations, HttpStatus.ACCEPTED);
     }
 }

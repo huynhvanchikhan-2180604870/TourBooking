@@ -18,7 +18,7 @@ public class TourDTO {
     private UUID category;
     private String description;
     private List<String> itinerary = new ArrayList<>();
-    private BigDecimal price;
+    private int price;
     private int durationDays;
     private LocalDate departureDate;
     private String destination;

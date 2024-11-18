@@ -1,15 +1,13 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Col, Container, Form, ListGroup, Row } from "reactstrap";
-import tourData from "../assets/data/tours";
+import { Col, Container, Row } from "reactstrap";
+import Booking from "../components/Booking/Booking";
+import Carousel from "../shared/Carousel";
+import { Newsletter } from "../shared/Newsletter";
+import { findTourById, getAllTours } from "../store/Tour/Action";
 import "../styles/tour-details.css";
 import calculateAvgRating from "../utils/avgRating";
-import avatar from '../assets/images/avatar.jpg'
-import Booking from "../components/Booking/Booking";
-import {Newsletter} from '../shared/Newsletter'
-import { findTourById, getAllTours } from "../store/Tour/Action";
-import { useDispatch, useSelector } from "react-redux";
-
 
 const TourDetails = () => {
   const { id } = useParams();
@@ -21,21 +19,22 @@ const TourDetails = () => {
   };
 
   // const reviewMsgRef = useParams();
-  const [tourRating, setTourRating] = useState(null)
+  const [tourRating, setTourRating] = useState(null);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(findTourById(id));
-  }, [id])
+  }, [id]);
 
-   const { totalRating, avgRating } = calculateAvgRating(tour?.tourDetails?.reviews);
-  
+  const { totalRating, avgRating } = calculateAvgRating(
+    tour?.tourDetails?.reviews
+  );
+
   // const options = {day: 'numeric', month: 'long', year: 'numeric'}
 
   // const submitHandler = e => {
   //   e.preventDefault()
   //   const reviewText = reviewMsgRef.current?.value
-    
+
   // }
 
   return (
@@ -45,8 +44,16 @@ const TourDetails = () => {
           <Row>
             <Col lg="8">
               <div className="tour__content">
-                <img src={tour?.tourDetails?.images[0]} alt="" />
+                <div className="tour__image">
+                  <Carousel data={tour?.tourDetails} />
+                </div>
                 <div className="tour__info">
+                  <span className="info__host">
+                    {tour?.tourDetails?.host?.username}
+                  </span>
+                  {tour?.tourDetails?.featured && (
+                    <span className="isFeature">Featured</span>
+                  )}
                   <h2 className="ms-1">{tour?.tourDetails?.title}</h2>
                   <div className="d-flex align-items-center gap-5">
                     <span className="tour__rating d-flex align-items-center gap-1">
@@ -95,9 +102,7 @@ const TourDetails = () => {
                     <strong>Description</strong>{" "}
                   </h5>
                   <div>
-                    {tour?.tourDetails?.description
-                      .split("\n")
-                      .map((line, index) => (
+                    {tour?.tourDetails?.description?.split("\n").map((line, index) => (
                         <p key={index}>
                           {line}
                           <br />

@@ -20,7 +20,6 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @Column(name = "role_name", nullable = false)

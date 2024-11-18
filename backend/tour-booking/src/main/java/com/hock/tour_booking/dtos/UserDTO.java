@@ -17,4 +17,5 @@ public class UserDTO {
     private String email;
     private boolean isActive;
     private Set<RoleDTO> roles = new HashSet<>();
+    private String cin;
 }

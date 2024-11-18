@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Table(name = "bookings")
 public class Booking {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @ManyToOne
@@ -29,17 +28,17 @@ public class Booking {
     private LocalDateTime bookingDate;
 
     @Column(name = "total_price")
-    private BigDecimal totalPrice;
+    private int totalPrice;
 
     @ManyToOne
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
     @Column(name = "discount_amount")
-    private BigDecimal discountAmount;
+    private int discountAmount;
 
     @Column(name = "final_price")
-    private BigDecimal finalPrice;
+    private int finalPrice;
 
     @Column(name = "payment_status")
     private String paymentStatus;
@@ -55,5 +54,8 @@ public class Booking {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "qr_base64")
+    private String qrBase64;
 
 }

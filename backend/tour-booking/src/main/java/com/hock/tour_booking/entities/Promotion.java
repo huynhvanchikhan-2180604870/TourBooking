@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Table(name = "promotions")
 public class Promotion {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @Column(unique = true, nullable = false)

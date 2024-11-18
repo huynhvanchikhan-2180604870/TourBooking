@@ -39,7 +39,7 @@ public class Tour {
 
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private int price;
 
     @Column(name = "duration_days")
     private int durationDays;
@@ -47,7 +47,10 @@ public class Tour {
     @Column(name = "departure_date")
     private LocalDate departureDate;
 
-    private String destination;
+    @ManyToOne
+    @JoinColumn(name = "destination_id")
+    private Destination destination;
+
 
     @ElementCollection
     @CollectionTable(name = "tour_images", joinColumns = @JoinColumn(name = "tour_id"))
@@ -79,5 +82,22 @@ public class Tour {
 
     @Column(name = "tickets_remaining")
     private int ticketsRemaining;
+
+    @Transient
+    private int reservedTickets = 0;
+
+    public synchronized boolean reserveTickets(int numberOfTickets) {
+        if (this.ticketsRemaining >= numberOfTickets) {
+            this.ticketsRemaining -= numberOfTickets;
+            this.reservedTickets += numberOfTickets;
+            return true;
+        }
+        return false;
+    }
+
+    public synchronized void rollbackReservedTickets() {
+        this.ticketsRemaining += this.reservedTickets;
+        this.reservedTickets = 0;
+    }
 
 }

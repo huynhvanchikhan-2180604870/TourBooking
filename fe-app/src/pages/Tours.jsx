@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { Col, Container, Row } from "reactstrap";
 import CommonSection from "../shared/CommonSection";
 import { Newsletter } from "../shared/Newsletter";
@@ -7,14 +8,13 @@ import { SearchBar } from "../shared/SearchBar";
 import { TourCard } from "../shared/TourCard";
 import { getAllTours } from "../store/Tour/Action";
 import "../styles/tour.css";
-import { useLocation } from "react-router-dom";
 
-import queryString from 'query-string';
+import queryString from "query-string";
 const Tours = () => {
   const { tour } = useSelector((state) => state);
   const dispatch = useDispatch();
 
-const location = useLocation();
+  const location = useLocation();
   useEffect(() => {
     const params = queryString.parse(location.search);
     dispatch(getAllTours({ page: 0, size: 12 }));
@@ -42,7 +42,11 @@ const location = useLocation();
       <section>
         <Container>
           <Row>
-            <SearchBar onSearch={handleSearch} />
+            <Col xs="2"></Col>
+            <Col xs="2">
+              <SearchBar onSearch={handleSearch} />
+            </Col>
+            <div className="col-3">Filter</div>
           </Row>
         </Container>
       </section>
@@ -55,11 +59,14 @@ const location = useLocation();
             ) : tour?.error ? (
               <p>Error: {tour?.error}</p>
             ) : (
-              tour?.tours?.map((item) => (
-                <Col lg="3" key={item.id} className="mb-4">
-                  <TourCard tour={item} />
-                </Col>
-              ))
+              tour?.tours?.map(
+                (item, index) =>
+                  item.ticketsRemaining >= 1 && (
+                    <Col lg="3" key={item.id} className="mb-4">
+                      <TourCard tour={item} />
+                    </Col>
+                  )
+              )
             )}
             <Col lg="12">
               <div className="pagination d-flex align-items-center justify-content-center mt-4 gap-3">

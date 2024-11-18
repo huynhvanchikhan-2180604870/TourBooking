@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardBody } from "reactstrap";
-import './tour-card.css'
 import { truncateString } from "../utils/truncateString";
+import "./tour-card.css";
 export const TourCard = ({ tour }) => {
   const totalRating = tour?.reviews?.reduce(
     (acc, item) => acc + item.rating,
@@ -15,8 +15,8 @@ export const TourCard = ({ tour }) => {
       ? totalRating
       : totalRating / tour?.reviews?.length;
   // Using the truncateString function to limit title length
-  const displayTitle = truncateString(tour?.title || "", 50);
-  const displayLocation = truncateString(tour?.destination || "", 30);
+  const displayTitle = truncateString(tour?.title || "", 40);
+  const displayLocation = truncateString(tour?.destination || "", 26);
   return (
     <div className="tour__card">
       <Card>
@@ -49,7 +49,7 @@ export const TourCard = ({ tour }) => {
           <div className="card__bottom d-flex align-items-center justify-content-between mt-3">
             <h5>
               ${tour?.price}
-              <span> /per person</span>
+              <span> /person</span>
             </h5>
             <button className="btn booking__btn">
               <Link to={`/tours/${tour?.id}`}>Book Now</Link>

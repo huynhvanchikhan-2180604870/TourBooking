@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Table(name = "notifications")
 public class Notification {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @ManyToOne

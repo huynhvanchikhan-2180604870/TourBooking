@@ -2,6 +2,7 @@ package com.hock.tour_booking.repositories;
 
 import com.hock.tour_booking.dtos.TourDTO;
 import com.hock.tour_booking.entities.Category;
+import com.hock.tour_booking.entities.Destination;
 import com.hock.tour_booking.entities.Tour;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -17,7 +18,9 @@ public class TourCustomRepo {
             return (root, query, criteriaBuilder) -> {
                 List<Predicate> predicates = new ArrayList<>();
                 if (destination != null && !destination.isEmpty()) {
-                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("destination")), "%" + destination.toLowerCase() + "%"));
+                    Join<Tour, Destination> destinationJoin = root.join("destination");
+//                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("destination")), "%" + destination.toLowerCase() + "%"));
+                    predicates.add(criteriaBuilder.equal(destinationJoin.get("name"), destination));
                 }
                 if (departureDate != null) {
                     predicates.add(criteriaBuilder.equal(root.get("departureDate"), departureDate));

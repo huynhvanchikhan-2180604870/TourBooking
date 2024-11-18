@@ -1,4 +1,8 @@
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import { Menu, MenuItem } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +12,6 @@ import "../../App.css";
 import logo from "../../assets/images/logo.png";
 import { logout } from "../../store/Auth/Action";
 import "./header.css";
-import { South } from "@mui/icons-material";
 
 const Header = () => {
   const nav_links = [
@@ -37,14 +40,49 @@ const Header = () => {
     dispatch(logout());
   };
 
-  const handleDashboard = () => {
-    console.log("Has ROLE_HOST: ", roleName);
+  const subMenuUser = [
+    {
+      title: "Profile",
+      url: "/profile",
+      icon: <ManageAccountsIcon />,
+    },
+    {
+      title: "Order History",
+      url: "/orders",
+      icon: <ScheduleIcon />,
+    },
+    {
+      title: "Favorite",
+      url: "/favorite",
+      icon: <FavoriteIcon />,
+    },
+  ];
 
-    if (roleName === "ROLE_HOST") {
-      navigate("/dashboard");
-    } else {
-      navigate("/home");
-    }
+  const subMenuHost = [
+    {
+      title: "Profile",
+      url: "/profile",
+      icon: <ManageAccountsIcon />,
+    },
+    {
+      title: "Order History",
+      url: "/orders",
+      icon: <ScheduleIcon />,
+    },
+    {
+      title: "Favorite",
+      url: "/favorite",
+      icon: <FavoriteIcon />,
+    },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: <AdminPanelSettingsIcon />,
+    },
+  ];
+
+  const handleNavigate = (url) => {
+    navigate(url);
   };
 
   useEffect(() => {
@@ -53,7 +91,6 @@ const Header = () => {
     );
 
     if (hasHostRole) {
-      
       setRoleName("ROLE_HOST");
     } else {
       setRoleName("ROLE_USER");
@@ -130,34 +167,67 @@ const Header = () => {
                       MenuListProps={{
                         "aria-labelledby": "basic-button",
                       }}
-                      sx={{ width: "190px" }}
+                      sx={{ margin: "10px 0px" }}
                     >
                       {roleName === "ROLE_USER"
-                        ? [
-                            <MenuItem key="profile" onClick={handleLogout}>
-                              Profile
-                            </MenuItem>,
-                            <MenuItem key="history" onClick={handleLogout}>
-                              History
-                            </MenuItem>,
-                            <MenuItem key="favorite" onClick={handleLogout}>
-                              Favorite
-                            </MenuItem>,
-                          ]
-                        : [
-                            <MenuItem key="profile" onClick={handleLogout}>
-                              Profile
-                            </MenuItem>,
-                            <MenuItem key="history" onClick={handleLogout}>
-                              History
-                            </MenuItem>,
-                            <MenuItem key="favorite" onClick={handleLogout}>
-                              Favorite
-                            </MenuItem>,
-                            <MenuItem key="dashboard" onClick={handleDashboard}>
-                              Dashboard
-                            </MenuItem>,
-                          ]}
+                        ? subMenuUser.map((item, index) => (
+                            <MenuItem
+                              key={index}
+                              onClick={() => handleNavigate(item.url)}
+                              sx={{
+                                width: "10rem",
+                                borderRadius: "8px",
+                                padding: "18px",
+                                backgroundColor: "#fff",
+                                "&:hover": {
+                                  backgroundColor: "#f0f0f0",
+                                },
+                              }}
+                            >
+                              {item.icon}
+                              <span className="me-2"></span>
+                              {item.title}
+                            </MenuItem>
+                          ))
+                        : subMenuHost.map((item, index) =>
+                            item.title === "Dashboard" ? (
+                              <MenuItem
+                                key={index}
+                                onClick={() => handleNavigate(item.url)}
+                                sx={{
+                                  width: "10rem",
+                                  borderRadius: "8px",
+                                  padding: "18px",
+                                  backgroundColor: "#fff",
+                                  "&:hover": {
+                                    backgroundColor: "#f0f0f0",
+                                  },
+                                }}
+                              >
+                                {item.icon}
+                                <span className="me-2"></span>
+                                {item.title}
+                              </MenuItem>
+                            ) : (
+                              <MenuItem
+                                key={index}
+                                onClick={() => handleNavigate(item.url)}
+                                sx={{
+                                  width: "10rem",
+                                  borderRadius: "8px",
+                                  padding: "18px",
+                                  backgroundColor: "#fff",
+                                  "&:hover": {
+                                    backgroundColor: "#f0f0f0",
+                                  },
+                                }}
+                              >
+                                {item.icon}
+                                <span className="me-2"></span>
+                                {item.title}
+                              </MenuItem>
+                            )
+                          )}
                     </Menu>
 
                     <Button

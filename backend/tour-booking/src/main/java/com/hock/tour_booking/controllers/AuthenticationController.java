@@ -122,7 +122,7 @@ public class AuthenticationController {
             String token = jwtProvider.generateToken(auth);
             AuthResponse authResponse = new AuthResponse(token, true);
             user.setIs_active(true);
-            User saveUser = userService.updateUser(user.getId(), user);
+            User saveUser = userService.updateUser( user);
             String message = "Congratulations, you have successfully verified your account.";
             emailService.sendVerificationCode(user.getEmail(), message, "Authentication successful");
             return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.CREATED);
