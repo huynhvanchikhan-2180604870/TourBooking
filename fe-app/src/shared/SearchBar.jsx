@@ -54,27 +54,27 @@ export const SearchBar = ({ onSearch }) => {
               <i className="ri-map-pin-line"></i>
             </span>
             <div className="ms-auto">
-              <h6 className="ms-3 mb-0 pb-0">Destination</h6>
+              <h6 className="ms-3 mb-0 pb-0">Điểm đến</h6>
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
                 options={destinations}
-                getOptionLabel={(option) => option.name} // Assuming your options are objects with 'title' properties
+                getOptionLabel={(option) => option?.name} // Assuming your options are objects with 'title' properties
                 sx={{ width: 230, border: "none", outline: "none" }}
                 onChange={(event, value) =>
                   formik.setFieldValue("destination", value ? value.name : "")
                 }
                 renderOption={(props, option) => (
                   <li {...props}>
-                    {option.name}{" "}
-                    <span
+                    {option?.name}{" "}
+                    <span key={option.id}
                       style={{
                         color: "gray",
                         fontSize: "15px",
                         paddingLeft: "5px",
                       }}
                     >
-                      ( {option.tourCount} tours)
+                      ( {option?.tourCount} tours)
                     </span>
                   </li>
                 )}
@@ -111,7 +111,7 @@ export const SearchBar = ({ onSearch }) => {
               <i className="ri-calendar-line"></i>
             </span>
             <div className="ms-3 mb-2">
-              <h6 className="mb-2">Departure Date</h6>
+              <h6 className="mb-2">Ngày khởi hành</h6>
               <input
                 type="date"
                 name="departureDate"
@@ -128,7 +128,7 @@ export const SearchBar = ({ onSearch }) => {
               <i class="ri-earth-line mt-2"></i>
             </span>
             <div className="ms-2">
-              <h6 className="ms-3">Category</h6>
+              <h6 className="ms-3">Loại hình chuyến đi</h6>
               {/* <select
                 value={formik.values.category}
                 onChange={formik.handleChange}
@@ -147,7 +147,7 @@ export const SearchBar = ({ onSearch }) => {
                 disablePortal
                 id="combo-box-demo"
                 options={categories}
-                getOptionLabel={(option) => option.name} // Assuming your options are objects with 'title' properties
+                getOptionLabel={(option) => option?.name} // Assuming your options are objects with 'title' properties
                 sx={{ width: 230, border: "none", outline: "none" }}
                 onChange={(event, value) =>
                   formik.setFieldValue("category", value ? value.id : "")

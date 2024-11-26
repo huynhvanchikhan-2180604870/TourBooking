@@ -93,3 +93,92 @@
     font-weight: 700 !important;
     font-size: 1.1rem !important;
 }
+
+.number-input {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #fff;
+    width: 120px;
+    outline: none;
+    /* Đảm bảo kích thước cân đối */
+}
+
+.number-input button {
+    background-color: #f9f9f9;
+    border: none;
+    width: 40px;
+    /* Đảm bảo nút +/- không bị to hoặc nhỏ hơn */
+    height: 40px;
+    /* Chiều cao đồng nhất */
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.number-input button:hover {
+    background-color: #eee;
+}
+
+.number-input input {
+    width: 40px;
+    /* Đảm bảo input nằm gọn giữa */
+    text-align: center;
+    border: none;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    -moz-appearance: textfield;
+    /* Bỏ style mặc định */
+}
+
+.number-input input::-webkit-outer-spin-button,
+.number-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    /* Bỏ style mặc định */
+    margin: 0;
+}
+
+.payment-method-group {
+    margin-top: 20px;
+}
+
+.payment-options {
+    display: flex;
+    justify-content: space-between;
+    /* Đặt khoảng cách đều giữa các tùy chọn */
+    align-items: center;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+}
+
+.payment-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.payment-logo {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}

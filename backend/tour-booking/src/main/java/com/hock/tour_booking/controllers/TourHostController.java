@@ -1,6 +1,7 @@
 package com.hock.tour_booking.controllers;
 
 import com.hock.tour_booking.dtos.CategoryDTO;
+import com.hock.tour_booking.dtos.RegistrationStat;
 import com.hock.tour_booking.dtos.TourDTO;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
 import com.hock.tour_booking.entities.*;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @RestController
@@ -31,6 +34,8 @@ public class TourHostController {
     private CategoryService categoryService;
     @Autowired
     private DestinationService destinationService;
+    @Autowired
+    private BookingService bookingService;
 
 
     @PostMapping("/create")
@@ -145,6 +150,14 @@ public class TourHostController {
     }
 
 
+    @GetMapping("gets/{hostId}")
+    public ResponseEntity<List<TourDTO>> getsAll(@RequestHeader("Authorization") String jwt, @PathVariable UUID hostId){
+        List<Tour> tours = tourService.findTourByHostCreateID(hostId);
+        List<TourDTO> tourDTOS = TourDtoMapper.tourDTOs(tours);
+        return ResponseEntity.ok(tourDTOS);
+    }
+
+
     @GetMapping
     public ResponseEntity<Map<String, Object>> getTours(
             @RequestHeader("Authorization") String jwt,
@@ -202,5 +215,30 @@ public class TourHostController {
         }
     }
 
+    @GetMapping("/host/{hostId}/tour-registrations")
+    public ResponseEntity<?> getHostTourRegistrations(
+            @RequestHeader("Authorization") String jwt,
+            @PathVariable UUID hostId,
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) UUID tourId) {
+        // Default to "month" period if not provided
+        if (period == null) {
+            period = "month";
+        }
+
+        // Call the service layer to fetch the stats
+        Map<String, List<RegistrationStat>> stats = bookingService.calculateHostStats(hostId, period, null, null, tourId);
+
+        return ResponseEntity.ok(stats);
+    }
+
+
+    @GetMapping("/revenue/{hostId}/{year}/{month}")
+    public ResponseEntity<Map<String, Integer>> getRevenueStats( @RequestHeader("Authorization") String jwt,@PathVariable UUID hostId, @PathVariable int year, @PathVariable int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+        Map<String, Integer> revenueStats = bookingService.calculateRevenueStatsByHostAndMonth(hostId, startOfMonth, endOfMonth);
+        return ResponseEntity.ok(revenueStats);
+    }
 
 }

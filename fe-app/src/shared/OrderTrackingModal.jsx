@@ -1,20 +1,44 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton, Modal, Typography } from "@mui/material";
-import { QRCodeCanvas } from "qrcode.react";
-import React, { useEffect } from "react";
+import { enqueueSnackbar } from "notistack";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { cancelTour } from "../store/Booking/Action";
+import { formatCurrency } from "../utils/formatCurrency";
+import { formatDateTime } from "../utils/formatDateTime";
 import "./order-tracking-modal.css";
 
 const OrderTrackingModal = ({ open, handleClose, item }) => {
-  const qrValue =
-    `- Booking ID: ${item.id}\n` +
-    `- Tour ID: ${item.tour}\n` +
-    `- User ID: ${item.user}\n` +
-    `- Payment Status: ${item.paymentStatus}`;
+  const dispatch = useDispatch();
+  const [qrValue, setQrValue] = useState("");
 
   useEffect(() => {
-    const canvas = document.querySelector("canvas");
-    const dataUrl = canvas?.toDataURL();
-  }, []);
+    if (!item) return; // Nếu item không tồn tại, không làm gì cả
+
+    if (item.bookingStatus === "CANCELED") {
+      setQrValue("Đơn hàng đã hủy");
+    } else {
+      const tempQrValue =
+        `- Booking ID: ${item.id}\n` +
+        `- Tour ID: ${item.tour}\n` +
+        `- User ID: ${item.user}\n` +
+        `- Payment Status: ${item.paymentStatus}`;
+      setQrValue(tempQrValue);
+    }
+  }, [item]); // Chỉ chạy lại khi item thay đổi
+
+  const handleCancelTour = async () => {
+    console.log("Booking id: ", item.id);
+    try {
+      await dispatch(cancelTour(item.id)); // Đợi dispatch hoàn thành
+      enqueueSnackbar("Hủy tour thành công!", { variant: "success" });
+      handleClose(); // Đóng modal sau khi hủy
+    } catch (error) {
+      enqueueSnackbar("Hủy tour thất bại. Vui lòng thử lại!", {
+        variant: "error",
+      });
+    }
+  };
   return (
     <Modal
       open={open}
@@ -58,37 +82,59 @@ const OrderTrackingModal = ({ open, handleClose, item }) => {
           Thanks for your booked
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }} className="">
-          Payment method: <span className="ms-4">{item.paymentMethod}</span>
+          Phương thức thanh toán:{" "}
+          <span className="ms-4">{item.paymentMethod}</span>
         </Typography>
         <Box sx={{ my: 2 }}>
           <Typography gutterBottom>
-            Guest: <span className="">{item.numPeople}</span>
+            Số vé đặt: <span className="">{item.numPeople}</span>
           </Typography>
           <Typography gutterBottom>
-            Status: <span className="">{item.bookingStatus}</span>{" "}
+            Trạng thái: <span className="">{item.bookingStatus}</span>{" "}
           </Typography>
           <Typography gutterBottom>
-            Booking date <span>{item.bookingDate}</span>
+            Ngày đặt: <span>{formatDateTime(item.bookingDate)}</span>
           </Typography>
           <Typography gutterBottom>
-            {" "}
             <b>
-              Total - $<span>{item.totalPrice}</span>
-            </b>{" "}
+              Tổng tiền - <span>{formatCurrency(item?.totalPrice)} vnđ</span>
+            </b>
           </Typography>
         </Box>
         <hr />
         <h5 className="text-center">QR checkin</h5>
         <div className="qr__checkin text-center">
-          <QRCodeCanvas
+          {/* <QRCodeCanvas
             value={qrValue}
             size={256}
             level="H" // Error correction level: L, M, Q, H
             includeMargin={true}
-          />
+          /> */}
+
+          {item?.qrBase64 && <img src={item?.qrBase64} alt="" />}
         </div>
         <div className="text-center mt-4 btn__download">
-          <button>Download</button>
+          {item?.paymentStatus === "UNPAID" && (
+            <>
+              <button className="ms-2 text-light" onClick={handleCancelTour}>
+                Thanh toán
+              </button>
+              <button className="ms-2 text-light" onClick={handleCancelTour}>
+                Hủy tour
+              </button>
+            </>
+          )}
+
+          {item?.paymentStatus === "PAIED" && (
+            <>
+              <button>Download</button>
+              <button className="ms-2 text-light" onClick={handleCancelTour}>
+                Hủy tour
+              </button>
+            </>
+          )}
+
+          {item?.paymentStatus === "NOT REFUNDED" && null}
         </div>
       </Box>
     </Modal>

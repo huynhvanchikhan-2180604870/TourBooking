@@ -26,6 +26,8 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String comment;
 
+    private String fullname;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

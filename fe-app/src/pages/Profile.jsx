@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import ChangePasswordModal from "../shared/ChangePasswordModal";
 import { getUserProfile, updateProfile } from "../store/Auth/Action";
 import "../styles/profile.css";
 
@@ -13,6 +14,18 @@ const validationSchema = Yup.object().shape({
 function Profile() {
   const { auth } = useSelector((store) => store);
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleResetPassword = () => {
+    handleOpen();
+  };
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -27,13 +40,12 @@ function Profile() {
   });
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt')
+    const jwt = localStorage.getItem("jwt");
     dispatch(getUserProfile(jwt));
-    
-  }, [auth?.user]);
-  
-  useEffect(() =>{
-    if(auth?.user){
+  }, []);
+
+  useEffect(() => {
+    if (auth?.user) {
       formik.setValues({
         username: auth?.user?.username,
         cin: auth?.user?.cin,
@@ -41,7 +53,7 @@ function Profile() {
         address: auth?.user?.address,
       });
     }
-  },[])
+  }, []);
 
   return (
     <div className="container">
@@ -77,12 +89,14 @@ function Profile() {
               <div className="card-body">
                 <div className="row gutters">
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <h6 className="mb-2 text-primary">Personal Details</h6>
+                    <h6 className="mb-2 text-primary">
+                      Thông tin cá nhân chi tiết
+                    </h6>
                   </div>
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div className="form-group">
                       <label htmlFor="fullName" className="mb-2">
-                        Full Name
+                        Họ và tên
                       </label>
                       <input
                         type="text"
@@ -109,7 +123,7 @@ function Profile() {
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div className="form-group">
                       <label htmlFor="phone" className="mb-2">
-                        Phone
+                        Số điện thoại
                       </label>
                       <input
                         type="text"
@@ -125,7 +139,7 @@ function Profile() {
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mt-3">
                     <div className="form-group">
                       <label htmlFor="website" className="mb-2">
-                        ID CARD
+                        Số CMND/CCCD
                       </label>
                       <input
                         type="text"
@@ -141,11 +155,11 @@ function Profile() {
                 </div>
                 <div className="row gutters">
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <h6 className="mt-3 mb-2 text-primary">Address</h6>
+                    <h6 className="mt-3 mb-2 text-primary">Địa chỉ</h6>
                   </div>
                   <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                     <div className="form-group">
-                      <label htmlFor="Street">Street</label>
+                      <label htmlFor="Street">Thông tin địa chỉ</label>
                       <input
                         type="name"
                         className="form-control"
@@ -162,10 +176,13 @@ function Profile() {
                   <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div className="text-right">
                       <button type="submit" className="btn secondary__btn me-3">
-                        Update
+                        Cập nhật thông tin
                       </button>
-                      <button className="btn primary__btn">
-                        Rest password
+                      <button
+                        className="btn primary__btn"
+                        onClick={handleResetPassword}
+                      >
+                        Đổi mật khẩu
                       </button>
                     </div>
                   </div>
@@ -175,6 +192,9 @@ function Profile() {
           </div>
         </div>
       </div>
+      <section>
+        <ChangePasswordModal open={open} handleClose={handleClose} />
+      </section>
     </div>
   );
 }

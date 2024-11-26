@@ -27,4 +27,5 @@ public class BookingDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String qrBase64;
+    private String ztranstionId;
 }

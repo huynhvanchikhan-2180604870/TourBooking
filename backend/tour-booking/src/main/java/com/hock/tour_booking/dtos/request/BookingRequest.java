@@ -14,4 +14,5 @@ public class BookingRequest {
     private int guestSize;
     private int amount;
     private UUID tour_id;
+    private String paymentMethod;
 }

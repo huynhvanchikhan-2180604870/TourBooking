@@ -1,5 +1,6 @@
 package com.hock.tour_booking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -99,5 +100,47 @@ public class Tour {
         this.ticketsRemaining += this.reservedTickets;
         this.reservedTickets = 0;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tour tour = (Tour) o;
+        return Objects.equals(id, tour.id);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Tour{" +
+                "id=" + id +
+                ", host=" + host +
+                ", category=" + category +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", itinerary=" + itinerary +
+                ", price=" + price +
+                ", durationDays=" + durationDays +
+                ", departureDate=" + departureDate +
+                ", destination=" + destination +
+                ", images=" + images +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", featured=" + featured +
+                ", reviews=" + reviews +
+                ", maxPeople=" + maxPeople +
+                ", startingLocation='" + startingLocation + '\'' +
+                ", transportation='" + transportation + '\'' +
+                ", ticketsRemaining=" + ticketsRemaining +
+                ", reservedTickets=" + reservedTickets +
+                '}';
+    }
+
+    @OneToMany(mappedBy = "tourReport", cascade = CascadeType.ALL)
+    @JsonIgnore // Hoặc sử dụng @JsonManagedReference nếu cần serialize
+    private List<Report> reports;
 }

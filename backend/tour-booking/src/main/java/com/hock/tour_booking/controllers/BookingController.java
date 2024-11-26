@@ -91,10 +91,11 @@ public class BookingController {
                 booking.setBookingDate(LocalDateTime.now());
                 booking.setPaymentStatus("UNPAID");
                 booking.setBookingStatus("CREATED");
-                booking.setPaymentMethod("UNPAID");
+                booking.setPaymentMethod(request.getPaymentMethod());
                 booking.setDiscountAmount(0);
                 Booking create = bookingService.createBooking(booking);
                 BookingDTO bookingDTO = BookingDtoMapper.toBookingDTO(create);
+                tour.setTicketsRemaining(tour.getTicketsRemaining() - request.getGuestSize());
                 return new ResponseEntity<>(bookingDTO, HttpStatus.CREATED);
             } else {
                 // Rollback tickets if payment fails
@@ -125,5 +126,48 @@ public class BookingController {
         List<BookingDTO> bookingDTOs = BookingDtoMapper.toBookingDTOs(bookings);
         return new ResponseEntity<>(bookingDTOs, HttpStatus.OK);
     }
+
+    @PutMapping("/cancel/{bookingId}")
+    public ResponseEntity<?> cancelTour(@RequestHeader("Authorization") String jwt, @PathVariable UUID bookingId) throws Exception {
+        // Lấy thông tin đặt vé
+        Booking booking = bookingService.findBookingById(bookingId);
+        User user = userService.findUserProfileByJwt(jwt);
+
+        // Kiểm tra xem booking có tồn tại và thuộc về user
+        if (booking == null || !booking.getUser().getId().equals(user.getId())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Kiểm tra điều kiện hủy
+        LocalDateTime bookingDate = booking.getBookingDate();
+        LocalDateTime now = LocalDateTime.now();
+
+        // Không cho phép hủy nếu quá 3 ngày kể từ ngày đặt
+        if (bookingDate.plusDays(3).isBefore(now)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cannot cancel booking: Cancellation period exceeded.");
+        }
+
+        // Lấy thông tin tour liên quan
+        Tour tour = booking.getTour();
+
+        // Hoàn vé lại nếu số lượng vé hợp lệ
+        int numPeople = booking.getNumPeople();
+        synchronized (tour) { // Đảm bảo đồng bộ để tránh xung đột dữ liệu
+            tour.setTicketsRemaining(tour.getTicketsRemaining() + numPeople);
+        }
+
+        // Cập nhật trạng thái đặt vé
+        booking.setBookingStatus("CANCELED");
+        booking.setPaymentStatus("NOT REFUNDED");
+        booking.setUpdatedAt(LocalDateTime.now());
+
+        BookingDTO saveBookingDTO = BookingDtoMapper.toBookingDTO(booking);
+        // Lưu lại booking và tour
+        bookingService.updateBooking(saveBookingDTO);
+        tourService.updateTour(tour.getId(), tour);
+
+        return new ResponseEntity<>(BookingDtoMapper.toBookingDTO(booking), HttpStatus.OK);
+    }
+
 
 }

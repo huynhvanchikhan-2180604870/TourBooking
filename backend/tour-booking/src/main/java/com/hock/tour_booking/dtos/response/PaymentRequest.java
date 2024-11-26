@@ -11,4 +11,5 @@ public class PaymentRequest {
     private int amount;
     private String order_id;
     private String qrUrl;
+    private String paymentMethod;
 }

@@ -8,6 +8,7 @@ export const uploadToCloudnary = async (pic) => {
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/dcc239rej/image/upload",
         {
+        
           method: "post",
           body: data,
         }

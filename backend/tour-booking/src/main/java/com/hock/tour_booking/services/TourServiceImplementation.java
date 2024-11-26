@@ -4,9 +4,11 @@ import com.hock.tour_booking.dtos.TourDTO;
 import com.hock.tour_booking.entities.Destination;
 import com.hock.tour_booking.entities.Review;
 import com.hock.tour_booking.entities.Tour;
+import com.hock.tour_booking.entities.User;
 import com.hock.tour_booking.repositories.DestinationRepository;
 import com.hock.tour_booking.repositories.TourCustomRepo;
 import com.hock.tour_booking.repositories.TourRepository;
+import com.hock.tour_booking.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,8 @@ public class TourServiceImplementation implements TourService {
     private ReviewService reviewService;
     @Autowired
     private DestinationRepository destinationRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -171,5 +175,15 @@ public class TourServiceImplementation implements TourService {
     @Override
     public List<Tour> findTourByDestination(UUID id){
         return tourRepository.findTourByDestination(id);
+    }
+
+    @Override
+    public List<Tour> findTourByHostCreateID(UUID hostId){
+        User user  = userRepository.findById(hostId).orElse(null);
+        if(user != null) {
+//            return tourRepositor
+            return tourRepository.findTourByHost(user.getId());
+        }
+        return null;
     }
 }

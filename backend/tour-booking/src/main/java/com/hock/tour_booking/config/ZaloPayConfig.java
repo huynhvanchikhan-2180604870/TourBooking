@@ -13,4 +13,5 @@ public class ZaloPayConfig {
     public static String GET_STATUS_PAY_URL = "https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid";
     public static String REDIRECT_URL = "http://localhost:3000/thank-you/";
     public static String CALL_BACK ="http://localhost:8080/api/v1/payment/callback";
+    public static String REFUND ="https://sandbox.zalopay.com.vn/v001/tpe/partialrefund";
 }

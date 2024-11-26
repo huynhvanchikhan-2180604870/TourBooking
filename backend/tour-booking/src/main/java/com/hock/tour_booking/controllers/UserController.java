@@ -2,6 +2,7 @@ package com.hock.tour_booking.controllers;
 
 import com.hock.tour_booking.dtos.UserDTO;
 import com.hock.tour_booking.dtos.mapper.UserDtoMapper;
+import com.hock.tour_booking.dtos.request.ChangePasswordRequest;
 import com.hock.tour_booking.entities.User;
 import com.hock.tour_booking.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,17 @@ public class UserController {
         User saveUser = userService.updateUser(user);
         UserDTO userResponseDto = UserDtoMapper.toUserDto(saveUser);
         return new ResponseEntity<>(userResponseDto, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String jwt,
+                                            @RequestBody ChangePasswordRequest request) {
+        try {
+            User user  = userService.findUserProfileByJwt(jwt);
+            userService.changeUserPassword(user.getId(), request.getOldPassword(), request.getNewPassword());
+            return ResponseEntity.ok().body("Password updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

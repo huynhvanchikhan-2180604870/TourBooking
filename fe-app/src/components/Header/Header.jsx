@@ -15,8 +15,8 @@ import "./header.css";
 
 const Header = () => {
   const nav_links = [
-    { path: "/home", display: "Home" },
-    { path: "/about", display: "About" },
+    { path: "/home", display: "Trang chủ" },
+    { path: "/news", display: "Blog" },
     { path: "/tours", display: "Tours" },
   ];
 
@@ -42,17 +42,17 @@ const Header = () => {
 
   const subMenuUser = [
     {
-      title: "Profile",
+      title: "Trang cá nhân",
       url: "/profile",
       icon: <ManageAccountsIcon />,
     },
     {
-      title: "Order History",
+      title: "Lịch sử đơn hàng",
       url: "/orders",
       icon: <ScheduleIcon />,
     },
     {
-      title: "Favorite",
+      title: "Tours yêu thích",
       url: "/favorite",
       icon: <FavoriteIcon />,
     },
@@ -60,17 +60,17 @@ const Header = () => {
 
   const subMenuHost = [
     {
-      title: "Profile",
+      title: "Trang cá nhân",
       url: "/profile",
       icon: <ManageAccountsIcon />,
     },
     {
-      title: "Order History",
+      title: "Lịch sử đơn hàng",
       url: "/orders",
       icon: <ScheduleIcon />,
     },
     {
-      title: "Favorite",
+      title: "Tours yêu thích",
       url: "/favorite",
       icon: <FavoriteIcon />,
     },
@@ -83,6 +83,7 @@ const Header = () => {
 
   const handleNavigate = (url) => {
     navigate(url);
+    handleClose();
   };
 
   useEffect(() => {
@@ -95,7 +96,7 @@ const Header = () => {
     } else {
       setRoleName("ROLE_USER");
     }
-  }, [roleName]);
+  }, [roleName, auth.user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,7 +148,7 @@ const Header = () => {
               </div>
               <div className="nav__right d-flex align-items-center gap-4">
                 {auth?.user ? (
-                  <div className="nav__btns d-flex align-items-center gap-4">
+                  <div className="nav__btns d-flex align-items-center gap-4 ">
                     <Button
                       className="btn secondary__btn border-1"
                       id="basic-button"
@@ -175,7 +176,7 @@ const Header = () => {
                               key={index}
                               onClick={() => handleNavigate(item.url)}
                               sx={{
-                                width: "10rem",
+                                width: "max-content",
                                 borderRadius: "8px",
                                 padding: "18px",
                                 backgroundColor: "#fff",
@@ -189,62 +190,42 @@ const Header = () => {
                               {item.title}
                             </MenuItem>
                           ))
-                        : subMenuHost.map((item, index) =>
-                            item.title === "Dashboard" ? (
-                              <MenuItem
-                                key={index}
-                                onClick={() => handleNavigate(item.url)}
-                                sx={{
-                                  width: "10rem",
-                                  borderRadius: "8px",
-                                  padding: "18px",
-                                  backgroundColor: "#fff",
-                                  "&:hover": {
-                                    backgroundColor: "#f0f0f0",
-                                  },
-                                }}
-                              >
-                                {item.icon}
-                                <span className="me-2"></span>
-                                {item.title}
-                              </MenuItem>
-                            ) : (
-                              <MenuItem
-                                key={index}
-                                onClick={() => handleNavigate(item.url)}
-                                sx={{
-                                  width: "10rem",
-                                  borderRadius: "8px",
-                                  padding: "18px",
-                                  backgroundColor: "#fff",
-                                  "&:hover": {
-                                    backgroundColor: "#f0f0f0",
-                                  },
-                                }}
-                              >
-                                {item.icon}
-                                <span className="me-2"></span>
-                                {item.title}
-                              </MenuItem>
-                            )
-                          )}
+                        : subMenuHost.map((item, index) => (
+                            <MenuItem
+                              key={index}
+                              onClick={() => handleNavigate(item.url)}
+                              sx={{
+                                width: "max-content",
+                                borderRadius: "8px",
+                                padding: "18px",
+                                backgroundColor: "#fff",
+                                "&:hover": {
+                                  backgroundColor: "#f0f0f0",
+                                },
+                              }}
+                            >
+                              {item.icon}
+                              <span className="me-2"></span>
+                              {item.title}
+                            </MenuItem>
+                          ))}
                     </Menu>
 
                     <Button
                       onClick={handleLogout}
                       className="btn primary__btn mb-2"
-                      style={{ width: "100px" }}
+                      style={{ width: "max-content" }}
                     >
-                      Logout
+                      Đăng xuất
                     </Button>
                   </div>
                 ) : (
                   <div className="nav__btns d-flex align-items-center gap-4">
                     <Button className="btn secondary__btn">
-                      <Link to="/login">Login</Link>
+                      <Link to="/login">Đăng nhập</Link>
                     </Button>
                     <Button className="btn primary__btn">
-                      <Link to="/register">Register</Link>
+                      <Link to="/register">Đăng ký</Link>
                     </Button>
                   </div>
                 )}

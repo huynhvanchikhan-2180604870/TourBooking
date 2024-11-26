@@ -58,4 +58,7 @@ public class Booking {
     @Column(name = "qr_base64")
     private String qrBase64;
 
+    @Column(name = "ztranstion_id")
+    private String ztranstionId;
+
 }

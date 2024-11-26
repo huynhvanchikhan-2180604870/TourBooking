@@ -9,7 +9,8 @@ import java.util.UUID;
 public class ReviewDTO {
     private UUID id;
     private UserDTO user;
-    private TourDTO tour;
+    private String fullname;
+    private UUID tour;
     private int rating;
     private String comment;
     private LocalDateTime createdAt;

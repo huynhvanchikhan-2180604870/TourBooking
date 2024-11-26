@@ -77,9 +77,9 @@ public class TourController {
     }
 
     @GetMapping("/destinations")
-    public ResponseEntity<List<Destination>> getDestinations(){
+    public ResponseEntity<List<DestinationDTO>> getDestinations(){
         List<Destination> destinations = destinationService.findAll();
         List<DestinationDTO> destinationDTOS = DestinationDtoMapper.toDestinationDtos(destinations);
-        return new ResponseEntity<>(destinations, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(destinationDTOS, HttpStatus.ACCEPTED);
     }
 }

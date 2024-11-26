@@ -39,6 +39,7 @@ public class ReviewServiceImplementation implements ReviewService {
         newReview.setRating(review.getRating());
         newReview.setComment(review.getComment());
         newReview.setCreatedAt(LocalDateTime.now());
+        newReview.setFullname(review.getFullname());
         Review savedReview = reviewRepository.save(newReview);
         tour.getReviews().add(savedReview);
         return savedReview;

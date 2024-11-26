@@ -5,12 +5,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Button, Col, Container, Row } from "reactstrap";
 import { checkPaymentStatus } from "../store/Booking/Action";
 import "../styles/thank-you.css";
+import { uploadToCloudnary } from "../utils/uploadToCloudnary";
 
 const ThankYou = () => {
   const location = useLocation();
   const [appTransId, setAppTransId] = useState("");
+  const [qrCloudUrl, setQrCloudUrl] = useState(""); // URL Cloudinary
   const { booking } = useSelector((state) => state);
-  console.log(booking?.bookingData);
   // Construct the QR code data string based on the booking data
   const qrValue =
     `- Booking ID: ${booking?.paymentStatus?.bookingId}\n` +
@@ -28,12 +29,27 @@ const ThankYou = () => {
   }, [location]);
 
   useEffect(() => {
-    if (appTransId) {
+    if (appTransId && qrValue) {
       const canvas = document.querySelector("canvas");
-      const dataUrl = canvas?.toDataURL();
-      dispatch(checkPaymentStatus(appTransId, dataUrl));
+      const dataUrl = canvas?.toDataURL("image/png"); // Convert QR to PNG format
+
+      if (dataUrl) {
+        const uploadQrToCloud = async () => {
+          try {
+            const cloudUrl = await uploadToCloudnary(dataUrl); // Upload QR code
+            setQrCloudUrl(cloudUrl); // Lưu URL từ Cloudinary
+            console.log("Uploaded QR URL:", cloudUrl);
+            // Dispatch với URL QR code từ Cloudinary
+            dispatch(checkPaymentStatus(appTransId, cloudUrl));
+          } catch (error) {
+            console.error("Error uploading QR code to Cloudinary:", error);
+          }
+        };
+
+        uploadQrToCloud();
+      }
     }
-  }, [dispatch, appTransId]);
+  }, [appTransId]);
   return (
     <section>
       <Container>

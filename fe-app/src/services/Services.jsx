@@ -10,22 +10,23 @@ import customizationImg from '../assets/images/customization.png';
 const servicesData = [
   {
     imgUrl: weatherImg,
-    title: "Calculate Weather",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    title: "Dự Báo Thời Tiết",
+    desc: "Nhận thông tin thời tiết chi tiết để chuẩn bị tốt nhất cho chuyến đi của bạn.",
   },
 
   {
     imgUrl: guideImg,
-    title: "Best Tour Guide",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    title: "Hướng Dẫn Viên Tốt Nhất",
+    desc: "Tận hưởng chuyến du lịch cùng hướng dẫn viên chuyên nghiệp và tận tâm.",
   },
 
   {
     imgUrl: customizationImg,
-    title: "Customization",
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    title: "Tùy Chỉnh Tour",
+    desc: "Thiết kế chuyến đi theo ý thích, phù hợp với lịch trình và ngân sách của bạn.",
   },
 ];
+
 export const Services = () => {
   return <>
     {

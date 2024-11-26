@@ -4,6 +4,9 @@ import {
   BOOKING_TOUR_FAILURE,
   BOOKING_TOUR_REQUEST,
   BOOKING_TOUR_SUCCESS,
+  CANCEL_TOUR_FAILURE,
+  CANCEL_TOUR_REQUEST,
+  CANCEL_TOUR_SUCCESS,
 } from "../Tour/ActionType";
 import {
   CHECK_PAYMENT_STATUS_FAILURE,
@@ -110,3 +113,27 @@ export const getOrderHistory = () => async (dispatch) => {
     dispatch({ type: GET_ORDERS_FAILURE, payload: error.toString() });
   }
 };
+
+export const cancelTour = (bookingId) => async (dispatch) => {
+  const token = localStorage.getItem("jwt");
+  dispatch({ type: CANCEL_TOUR_REQUEST });
+
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/api/v2/booking/cancel/${bookingId}`,
+      {}, // Body trống nếu không có dữ liệu cần gửi
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Booking data response: ", response.data);
+    dispatch({ type: CANCEL_TOUR_SUCCESS, payload: response.data });
+  } catch (error) {
+    console.error("Error during booking: ", error);
+    dispatch({ type: CANCEL_TOUR_FAILURE, payload: error.toString() });
+  }
+};
+

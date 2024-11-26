@@ -23,22 +23,26 @@ const Tours = () => {
     dispatch(getAllTours({ page: pageNumber, size: 12 }));
   };
 
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
   const handleSearch = (searchParams) => {
     console.log("searchParams: ", searchParams);
     dispatch(
       getAllTours({
         page: 0,
         size: 12,
-        destination: searchParams.destination,
-        departureDate: searchParams.departureDate,
-        category: searchParams.category,
+        destination: searchParams?.destination,
+        departureDate: searchParams?.departureDate,
+        category: searchParams?.category,
       })
     );
   };
 
   return (
     <>
-      <CommonSection title={"All Tours"} />
+      <CommonSection title={"Tất cả các tours "} />
       <section>
         <Container>
           <Row>
@@ -46,7 +50,7 @@ const Tours = () => {
             <Col xs="2">
               <SearchBar onSearch={handleSearch} />
             </Col>
-            <div className="col-3">Filter</div>
+            
           </Row>
         </Container>
       </section>

@@ -1,16 +1,22 @@
 package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
+import com.hock.tour_booking.dtos.RegistrationStat;
 import com.hock.tour_booking.entities.Booking;
+import com.hock.tour_booking.entities.Tour;
 import com.hock.tour_booking.exception.BookingException;
 import com.hock.tour_booking.repositories.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImplementation implements BookingService {
@@ -39,6 +45,7 @@ public class BookingServiceImplementation implements BookingService {
         newBooking.setPaymentMethod(booking.getPaymentMethod());
         newBooking.setCreatedAt(LocalDateTime.now());
         newBooking.setUpdatedAt(booking.getUpdatedAt());
+        newBooking.setZtranstionId(booking.getZtranstionId());
         newBooking.setQrBase64(null);
         Booking savedBooking = bookingRepository.save(newBooking);
         return savedBooking;
@@ -62,11 +69,11 @@ public class BookingServiceImplementation implements BookingService {
         Booking currentBooking = findBookingById(booking.getId());
         if(currentBooking == null) throw new BookingException("Booking not found");
 
-        if(currentBooking.getNumPeople() != booking.getNumPeople()) {
+        if(booking.getNumPeople() != currentBooking.getNumPeople()) {
             currentBooking.setNumPeople(booking.getNumPeople());
         }
 
-        if(currentBooking.getBookingStatus() != booking.getBookingStatus()) {
+        if(booking.getBookingStatus() != null) {
             currentBooking.setBookingStatus(booking.getBookingStatus());
         }
 
@@ -74,11 +81,11 @@ public class BookingServiceImplementation implements BookingService {
             currentBooking.setFinalPrice(booking.getFinalPrice());
         }
 
-        if(currentBooking.getPaymentStatus() != booking.getPaymentStatus()) {
+        if(booking.getPaymentStatus() != null) {
             currentBooking.setPaymentStatus(booking.getPaymentStatus());
         }
 
-        if(currentBooking.getBookingStatus() != booking.getBookingStatus()) {
+        if(booking.getBookingStatus() != null) {
             currentBooking.setBookingStatus(booking.getBookingStatus());
         }
 
@@ -92,6 +99,10 @@ public class BookingServiceImplementation implements BookingService {
 
         if(currentBooking.getQrBase64() != booking.getQrBase64()) {
             currentBooking.setQrBase64(booking.getQrBase64());
+        }
+
+        if(booking.getZtranstionId() != null){
+            currentBooking.setZtranstionId(booking.getZtranstionId());
         }
 
         currentBooking.setUpdatedAt(LocalDateTime.now());
@@ -108,4 +119,50 @@ public class BookingServiceImplementation implements BookingService {
     public List<Booking> findAllBookingsByUserId(UUID userId) {
         return bookingRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public Map<String, List<RegistrationStat>> calculateHostStats(UUID hostId, String period, String startDate, String endDate, UUID tourId) {
+        // Fetch bookings by tourId (if provided) and hostId
+        List<Booking> bookings = bookingRepository.findBookingsByTourHostId(hostId, tourId);
+
+        // Group the bookings by period and count registrations
+        return bookings.stream()
+                .collect(Collectors.groupingBy(
+                        booking -> formatPeriod(booking.getBookingDate().toLocalDate(), period),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> Collections.singletonList(new RegistrationStat(formatPeriod(list.get(0).getBookingDate().toLocalDate(), period), list.size()))
+                        )
+                ));
+    }
+
+    private String formatPeriod(LocalDate date, String period) {
+        switch (period.toLowerCase()) {
+            case "year":
+                return String.valueOf(date.getYear());
+            case "month":
+                return date.getYear() + "-" + date.getMonthValue();
+            case "day":
+                return date.getYear() + "-" + date.getMonthValue() + "-" + date.getDayOfMonth();
+            default:
+                return "";
+        }
+    }
+
+    public Map<String, Integer> calculateRevenueStatsByHostAndMonth(UUID hostId, LocalDate startOfMonth, LocalDate endOfMonth) {
+        List<Tour> tours = tourService.findTourByHostCreateID(hostId);
+        List<UUID> tourIds = tours.stream().map(Tour::getId).collect(Collectors.toList());
+
+        LocalDateTime startDateTime = startOfMonth.atStartOfDay(); // Start of the month
+        LocalDateTime endDateTime = endOfMonth.atTime(23, 59, 59); // End of the month
+
+        List<Booking> bookings = bookingRepository.findBookingsByTourIdsAndDateRange(tourIds, startDateTime, endDateTime);
+        return bookings.stream()
+                .collect(Collectors.groupingBy(
+                        booking -> booking.getBookingDate().getMonth().toString() + " " + booking.getBookingDate().getYear(),
+                        Collectors.summingInt(Booking::getTotalPrice)
+                ));
+    }
+
+
 }

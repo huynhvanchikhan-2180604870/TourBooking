@@ -212,5 +212,23 @@
     border: none;
     outline: none;
     border-radius: 15px;
-    right: 30px;
+    right: 20%;
+}
+
+.report {
+    position: absolute;
+    top: -20px;
+    background-color: #ffff !important;
+    color: #ffff !important;
+    padding: 4px;
+    border: 1px solid var(--primary-color);
+    outline: none;
+    border-radius: 15px;
+    font-size: 20px;
+    right: 0%;
+}
+
+.report .icon__more i {
+    font-size: 20px !important;
+    color: var(--heading-color) !important;
 }

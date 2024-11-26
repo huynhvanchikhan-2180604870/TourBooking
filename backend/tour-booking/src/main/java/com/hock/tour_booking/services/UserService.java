@@ -13,4 +13,5 @@ public interface UserService {
     public User addUser(User user)throws Exception;
     public void addRoleForUser(UUID id, String roleName)throws Exception;
     public void updateHostRole(UUID userId, UUID roleId) throws Exception;
+    public void changeUserPassword(UUID id, String oldPassword, String newPassword) throws Exception ;
 }

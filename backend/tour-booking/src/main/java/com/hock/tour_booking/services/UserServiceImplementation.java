@@ -132,4 +132,18 @@ public class UserServiceImplementation implements UserService {
         role.getUsers().add(user);
         userRepository.save(user);
     }
+
+
+    public void changeUserPassword(UUID id, String oldPassword, String newPassword) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(() -> new Exception("user not found with id " + id));
+
+        // Check if the old password is correct
+        if (!passwordEncoder.matches(oldPassword, user.getPassword_hash())) {
+            throw new Exception("Invalid old password");
+        }
+
+        // Set new password and encode it
+        user.setPassword_hash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

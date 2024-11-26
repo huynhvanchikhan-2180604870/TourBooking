@@ -120,3 +120,19 @@ export const updateProfile = (request) => async (dispatch) => {
     dispatch({ type: UPDATE_USER_FAILURE, payload: error.message });
   }
 };
+
+export const changePassword = (request) => async (dispatch) => {
+  const token = localStorage.getItem("jwt");
+  try {
+    const { response } = await axios.post(
+      `${API_BASE_URL}/api/v2/users/change-password`,
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response);
+  } catch (error) {}
+};

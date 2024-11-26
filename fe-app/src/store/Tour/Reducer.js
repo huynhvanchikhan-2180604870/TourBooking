@@ -123,7 +123,6 @@ const tourReducer = (state = initialState, action) => {
         ),
       };
     case POST_TOUR_REVIEW_SUCCESS:
-      // Update the specific tour's details with the new review information
       return {
         ...state,
         loading: false,

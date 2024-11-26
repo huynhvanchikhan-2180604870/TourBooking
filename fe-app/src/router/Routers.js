@@ -1,6 +1,10 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import DashboardHost from "../components/Dashboard/Host/DashboardHost";
+import OrderTracking from "../components/Dashboard/Host/Pages/OrderTracking";
+import Revenue from "../components/Dashboard/Host/Pages/Revenue";
+import TourHost from "../components/Dashboard/Host/Pages/TourHost";
+import OrderHistory from "../pages/OrderHistory";
 import Profile from "../pages/Profile";
 import ThankYou from "../pages/ThankYou";
 import Home from "./../pages/Home";
@@ -9,8 +13,7 @@ import Register from "./../pages/Register";
 import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
-import TourHost from "../components/Dashboard/Host/Pages/TourHost";
-import  OrderHistory  from "../pages/OrderHistory";
+import AdminDashboard from "../components/Dashboard/Admin/AdminDashboard"
 
 const Routers = () => {
   return (
@@ -29,6 +32,9 @@ const Routers = () => {
         <Route path="/dashboard" element={<DashboardHost />} />
         <Route path="/dashboard/tours" element={<TourHost />} />
         <Route path="/dashboard/support" element={<DashboardHost />} />
+        <Route path="/dashboard/revenue" element={<Revenue />} />
+        <Route path="/dashboard/orders_tracking" element={<OrderTracking />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </div>
   );
