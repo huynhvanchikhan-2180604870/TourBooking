@@ -36,48 +36,42 @@ export const Testimonial = () => {
     <Slider {...settings}>
       <div className="testimonial py-4 px-3">
         <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus sit,
-          ducimus, itaque numquam, optio eaque repudiandae facilis voluptatem
-          debitis quae fugiat doloribus natus eius similique a cum laudantium
-          hic ipsam?
+          "Chuyến đi thật tuyệt vời! Mọi thứ đều được tổ chức chu đáo và điểm
+          đến đẹp ngoài sức tưởng tượng. Tôi chắc chắn sẽ quay lại!"
         </p>
         <div className="d-flex align-items-center gap-4 mt-3">
-          <img src={ava01} className="w-25 h-25 rounded-2" alt="" />
+          <img src={ava01} className="w-25 h-25 rounded-2" alt="Avatar" />
           <div>
             <h6 className="mb-0 mt-3">John Doe</h6>
-            <p>Customer</p>
+            <p>Khách Hàng</p>
           </div>
         </div>
       </div>
 
       <div className="testimonial py-4 px-3">
         <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus sit,
-          ducimus, itaque numquam, optio eaque repudiandae facilis voluptatem
-          debitis quae fugiat doloribus natus eius similique a cum laudantium
-          hic ipsam?
+          "Hành trình này là một trải nghiệm không thể quên. Hướng dẫn viên rất
+          thân thiện, chuyên nghiệp, và luôn sẵn sàng hỗ trợ."
         </p>
         <div className="d-flex align-items-center gap-4 mt-3">
-          <img src={ava02} className="w-25 h-25 rounded-2" alt="" />
+          <img src={ava02} className="w-25 h-25 rounded-2" alt="Avatar" />
           <div>
             <h6 className="mb-0 mt-3">Lia Franklin</h6>
-            <p>Customer</p>
+            <p>Khách Hàng</p>
           </div>
         </div>
       </div>
 
       <div className="testimonial py-4 px-3">
         <p>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Minus sit,
-          ducimus, itaque numquam, optio eaque repudiandae facilis voluptatem
-          debitis quae fugiat doloribus natus eius similique a cum laudantium
-          hic ipsam?
+          "Dịch vụ tuyệt vời, từ việc đặt tour đến trải nghiệm thực tế. Tôi rất
+          ấn tượng với sự tận tâm và chuyên nghiệp của đội ngũ."
         </p>
         <div className="d-flex align-items-center gap-4 mt-3">
-          <img src={ava03} className="w-25 h-25 rounded-2" alt="" />
+          <img src={ava03} className="w-25 h-25 rounded-2" alt="Avatar" />
           <div>
             <h6 className="mb-0 mt-3">John Doe</h6>
-            <p>Customer</p>
+            <p>Khách Hàng</p>
           </div>
         </div>
       </div>

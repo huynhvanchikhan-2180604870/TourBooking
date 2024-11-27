@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 public class Payment {
     @Id
-    @GeneratedValue
     private UUID id;
 
     @OneToOne
@@ -20,7 +19,7 @@ public class Payment {
     private Booking booking;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private int amount;
 
     @Column(name = "payment_date")
     private LocalDateTime paymentDate;

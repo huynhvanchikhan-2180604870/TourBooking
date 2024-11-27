@@ -16,4 +16,6 @@ public interface TourService {
     public void deleteTour(UUID id)throws Exception;
     public Page<Tour> findAllTours(String destination, LocalDate departureDate, UUID category, int page, int size, String sortName, String sortDirect);
     public Page<Tour> findAllToursByHost(UUID hostId, String search, int page, int size, String sortName, String sortDirect);
+    public List<Tour> findTourByDestination(UUID id);
+    public List<Tour> findTourByHostCreateID(UUID hostId);
 }

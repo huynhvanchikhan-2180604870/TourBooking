@@ -18,8 +18,9 @@ public class ReviewDtoMapper {
         reviewDTO.setId(review.getId());
         reviewDTO.setComment(review.getComment());
         reviewDTO.setRating(review.getRating());
-        setTour(reviewDTO, review);
         setUser(reviewDTO, review.getUser());
+        reviewDTO.setTour(review.getTour().getId());
+        reviewDTO.setFullname(reviewDTO.getFullname());
         reviewDTO.setCreatedAt(review.getCreatedAt());
         return reviewDTO;
     }
@@ -34,11 +35,11 @@ public class ReviewDtoMapper {
         return reviewDTOSet;
     }
 
-    public static void setTour(ReviewDTO reviewDTO, Review review) {
-        TourDTO tourDTO = TourDtoMapper.toTourDTO(review.getTour());
-        reviewDTO.setTour(tourDTO);
-    }
-
+//    public static void setTour(ReviewDTO reviewDTO, Review review) {
+//        TourDTO tourDTO = TourDtoMapper.toTourDTO(review.getTour());
+//        reviewDTO.setTour(tourDTO);
+//    }
+//
     public static void setUser(ReviewDTO reviewDTO, User user) {
         UserDTO userDTO = UserDtoMapper.toUserDto(user);
         reviewDTO.setUser(userDTO);

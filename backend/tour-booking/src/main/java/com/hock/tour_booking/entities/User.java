@@ -35,6 +35,7 @@ public class User{
     @Column(name = "phone_number", unique = true)
     private String phone_number;
 
+    private String cin;
 
     private String address;
 

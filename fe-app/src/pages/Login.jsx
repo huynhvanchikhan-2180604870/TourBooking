@@ -1,7 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
 import React from "react";
-import FacebookLogin from "react-facebook-login";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Col, Container, Form, FormGroup, Row } from "reactstrap";
@@ -150,23 +149,7 @@ const Login = () => {
                       onError={errorMessage}
                     />
                   </div>
-                  <div className="social__login d-flex align-items-center justify-content-between mt-3">
-                    <FacebookLogin
-                      buttonStyle={{
-                        padding: "6px",
-                        borderRadius: "13px",
-                        justifyContent: "between",
-                        marginLeft: "1px",
-                      }}
-                      appId="853865503586793" // we need to get this from facebook developer console by setting the app.
-                      autoLoad={false}
-                      fields="name,email,picture"
-                      callback={handleFacebookCallback}
-                      cssClass="facebook"
-                      icon="fa-facebook"
-                      textButton="Facebook"
-                    />
-                  </div>
+                  {/* <div className="social__login d-flex align-items-center justify-content-between mt-3"></div> */}
                 </Form>
                 <p>
                   Don't have an account? <Link to="/register">Create</Link>

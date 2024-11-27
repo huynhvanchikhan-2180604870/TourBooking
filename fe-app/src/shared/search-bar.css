@@ -55,3 +55,9 @@
     outline: none;
     
 }
+
+.autocomplete{
+    width: 100px;
+    border: none;
+    outline: none;
+}

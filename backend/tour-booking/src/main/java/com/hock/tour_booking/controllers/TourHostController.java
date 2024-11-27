@@ -1,18 +1,13 @@
 package com.hock.tour_booking.controllers;
 
 import com.hock.tour_booking.dtos.CategoryDTO;
+import com.hock.tour_booking.dtos.RegistrationStat;
 import com.hock.tour_booking.dtos.TourDTO;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
-import com.hock.tour_booking.entities.Category;
-import com.hock.tour_booking.entities.Role;
-import com.hock.tour_booking.entities.Tour;
-import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.entities.*;
 import com.hock.tour_booking.repositories.RoleCustomRepo;
 import com.hock.tour_booking.repositories.RoleRepository;
-import com.hock.tour_booking.services.CategoryService;
-import com.hock.tour_booking.services.RoleService;
-import com.hock.tour_booking.services.TourService;
-import com.hock.tour_booking.services.UserService;
+import com.hock.tour_booking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @RestController
@@ -35,10 +32,20 @@ public class TourHostController {
     private RoleRepository roleRepository;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private DestinationService destinationService;
+    @Autowired
+    private BookingService bookingService;
+
 
     @PostMapping("/create")
     public ResponseEntity<TourDTO>createTour(@RequestBody TourDTO tourDTO, @RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
+        Destination currentDestination = destinationService.findByName(tourDTO.getDestination());
+        if (currentDestination == null) {
+            Destination savedestination = destinationService.createDestination(tourDTO.getDestination());
+            currentDestination = savedestination;
+        }
         Category category = categoryService.findById(tourDTO.getCategory());
         List<String> roleNames = null;
         HashSet<Role> roles = new HashSet<>();
@@ -56,7 +63,8 @@ public class TourHostController {
         tour.setTitle(tourDTO.getTitle());
         tour.setDescription(tourDTO.getDescription());
         tour.setPrice(tourDTO.getPrice());
-        tour.setDestination(tourDTO.getDestination());
+
+        tour.setDestination(currentDestination);
         tour.setDepartureDate(tourDTO.getDepartureDate());
         tour.setDurationDays(tourDTO.getDurationDays());
         tour.setItinerary(tourDTO.getItinerary());
@@ -101,7 +109,8 @@ public class TourHostController {
         tour.setTitle(tourDTO.getTitle());
         tour.setDescription(tourDTO.getDescription());
         tour.setPrice(tourDTO.getPrice());
-        tour.setDestination(tourDTO.getDestination());
+        Destination destination = destinationService.findByName(tourDTO.getDestination());
+        tour.setDestination(destination);
         tour.setDepartureDate(tourDTO.getDepartureDate());
         tour.setDurationDays(tourDTO.getDurationDays());
         tour.setItinerary(tourDTO.getItinerary());
@@ -138,6 +147,14 @@ public class TourHostController {
         tourService.deleteTour(id);
         System.out.println("Deleted success");
         return new ResponseEntity<>("Deleted Successfuly", HttpStatus.ACCEPTED);
+    }
+
+
+    @GetMapping("gets/{hostId}")
+    public ResponseEntity<List<TourDTO>> getsAll(@RequestHeader("Authorization") String jwt, @PathVariable UUID hostId){
+        List<Tour> tours = tourService.findTourByHostCreateID(hostId);
+        List<TourDTO> tourDTOS = TourDtoMapper.tourDTOs(tours);
+        return ResponseEntity.ok(tourDTOS);
     }
 
 
@@ -198,5 +215,30 @@ public class TourHostController {
         }
     }
 
+    @GetMapping("/host/{hostId}/tour-registrations")
+    public ResponseEntity<?> getHostTourRegistrations(
+            @RequestHeader("Authorization") String jwt,
+            @PathVariable UUID hostId,
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) UUID tourId) {
+        // Default to "month" period if not provided
+        if (period == null) {
+            period = "month";
+        }
+
+        // Call the service layer to fetch the stats
+        Map<String, List<RegistrationStat>> stats = bookingService.calculateHostStats(hostId, period, null, null, tourId);
+
+        return ResponseEntity.ok(stats);
+    }
+
+
+    @GetMapping("/revenue/{hostId}/{year}/{month}")
+    public ResponseEntity<Map<String, Integer>> getRevenueStats( @RequestHeader("Authorization") String jwt,@PathVariable UUID hostId, @PathVariable int year, @PathVariable int month) {
+        LocalDate startOfMonth = LocalDate.of(year, month, 1);
+        LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
+        Map<String, Integer> revenueStats = bookingService.calculateRevenueStatsByHostAndMonth(hostId, startOfMonth, endOfMonth);
+        return ResponseEntity.ok(revenueStats);
+    }
 
 }

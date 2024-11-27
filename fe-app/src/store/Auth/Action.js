@@ -9,6 +9,8 @@ import {
   LOGIN_USER_SUCCESS,
   REGISTER_USER_FAILURE,
   REGISTER_USER_SUCCESS,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_SUCCESS,
 } from "./ActionType";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -57,7 +59,7 @@ export const verify = (email, password, verify_code) => async (dispatch) => {
     if (response.ok) {
       localStorage.setItem("jwt", data.token);
       dispatch({ type: REGISTER_USER_SUCCESS, payload: data.token });
-    } 
+    }
   } catch (error) {
     console.error("Verification failed:", error);
     alert("Something went wrong. Please try again.");
@@ -98,4 +100,39 @@ export const loginGoole = (token) => async (dispatch) => {
   } catch (error) {
     dispatch({ type: LOGIN_GOOGLE_FAILURE, payload: error.message });
   }
+};
+
+export const updateProfile = (request) => async (dispatch) => {
+  const token = localStorage.getItem("jwt");
+  try {
+    const { response } = await axios.post(
+      `${API_BASE_URL}/api/v2/users/update`,
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response);
+    dispatch({ type: UPDATE_USER_SUCCESS, payload: response.data });
+  } catch (error) {
+    dispatch({ type: UPDATE_USER_FAILURE, payload: error.message });
+  }
+};
+
+export const changePassword = (request) => async (dispatch) => {
+  const token = localStorage.getItem("jwt");
+  try {
+    const { response } = await axios.post(
+      `${API_BASE_URL}/api/v2/users/change-password`,
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response);
+  } catch (error) {}
 };

@@ -14,9 +14,8 @@ import { Services } from "../services/Services";
 import { Newsletter } from "../shared/Newsletter";
 import { SearchBar } from "../shared/SearchBar";
 import Subtitle from "../shared/Subtitle";
-import "../styles/home.css";
-import tours from "../assets/data/tours";
 import { getAllTours } from "../store/Tour/Action";
+import "../styles/home.css";
 const Home = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,7 +29,7 @@ const Home = () => {
         category: searchParams.category,
       })
     );
-    navigate()
+    navigate();
   };
   return (
     <>
@@ -41,18 +40,23 @@ const Home = () => {
             <Col lg="6">
               <div className="hero__content">
                 <div className="hero__subtitle d-flex align-items-center">
-                  <Subtitle subtitle={"Know Before You Go"} />
+                  <Subtitle subtitle={"Hành trang trước khi đi"} />
                   <img src={worldImg} alt="" />
                 </div>
                 <h1>
-                  Traveling opens the door to creating{" "}
-                  <span className="highlight">memories</span>
+                  Du lịch mở ra cánh cửa để tạo nên những{" "}
+                  <span className="highlight">kỷ niệm</span>
                 </h1>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dolor, velit voluptatum aliquam suscipit ipsam magni vero non
-                  voluptates, commodi tempore ad cupiditate voluptatibus,
-                  adipisci cum? Deserunt minima veniam libero mollitia.
+                  <strong>Khám phá và trải nghiệm:</strong> Du lịch không chỉ là
+                  việc di chuyển từ nơi này sang nơi khác mà còn là cách để khám
+                  phá những nền văn hóa mới, phong cảnh tuyệt đẹp, và con người
+                  thú vị.
+                </p>
+                <p>
+                  <strong>Tạo kết nối cảm xúc:</strong> Những kỷ niệm từ các
+                  chuyến đi thường là những điều quý giá, giúp tạo nên câu
+                  chuyện và cảm xúc mà chúng ta lưu giữ suốt đời.
                 </p>
               </div>
             </Col>
@@ -85,8 +89,10 @@ const Home = () => {
         <Container>
           <Row>
             <Col lg="3">
-              <h5 className="service__subtitle">What we serve</h5>
-              <h2 className="service__title">We offer our best services</h2>
+              <h5 className="service__subtitle">Những Gì Chúng Tôi Cung Cấp</h5>
+              <h2 className="service__title">
+                Chúng Tôi Mang Đến Dịch Vụ Tốt Nhất
+              </h2>
             </Col>
             <Services />
           </Row>
@@ -98,8 +104,10 @@ const Home = () => {
         <Container>
           <Row>
             <Col lg="12" className="mb-5">
-              <Subtitle subtitle={"Explore"} />
-              <h2 className="feature__tour-title">Our featured tours</h2>
+              <Subtitle subtitle={"Khám phá"} />
+              <h2 className="feature__tour-title">
+                Các Tour Nổi Bật Của Chúng Tôi
+              </h2>
             </Col>
             <FeaturedTours />
           </Row>
@@ -113,31 +121,30 @@ const Home = () => {
           <Row>
             <Col lg="6">
               <div className="experience__content">
-                <Subtitle subtitle={"Experience"} />
+                <Subtitle subtitle={"Trải nghiệm"} />
                 <h2>
-                  With our all experience <br /> we will serve you
+                  Với tất cả kinh nghiệm của chúng tôi{" "}
+                  <strong>Chúng tôi sẽ phục vụ bạn</strong>
                 </h2>
                 <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  <br /> Laboriosam temporibus vitae ullam dignissimos voluptate
-                  error voluptatem incidunt, necessitatibus fugiat, excepturi
-                  repudiandae deserunt maxime enim perspiciatis unde labore
-                  nesciunt facilis consequuntur.
+                  <strong>Khám phá thế giới theo cách của bạn.</strong>
+                  <br /> Chúng tôi đồng hành cùng bạn trong mọi hành trình, mang
+                  đến những trải nghiệm đáng nhớ và dịch vụ hoàn hảo.
                 </p>
               </div>
               <div className="counter__wrapper d-flex align-items-center gap-5">
                 <div className="counter__box">
                   <span>12k+</span>
-                  <h6>Successfull Trip</h6>
+                  <h6>Chuyến Đi Thành Công</h6>
                 </div>
 
                 <div className="counter__box">
                   <span>2k+</span>
-                  <h6>Successfull Trip</h6>
+                  <h6>Khách Hàng Hài Lòng</h6>
                 </div>
                 <div className="counter__box">
                   <span>15</span>
-                  <h6>Years experience</h6>
+                  <h6>Năm Kinh Nghiệm</h6>
                 </div>
               </div>
             </Col>
@@ -156,9 +163,10 @@ const Home = () => {
         <Container>
           <Row>
             <Col lg="12">
-              <Subtitle subtitle={"Gallery"} />
+              <Subtitle subtitle={"Thư Viện Hình Ảnh"} />
               <h2 className="gallery__title">
-                Visit our customers tour gallery
+                Khám phá vẻ đẹp của các điểm đến qua những <br /> hình ảnh tuyệt
+                đẹp trong thư viện của chúng tôi.
               </h2>
             </Col>
 
@@ -174,8 +182,11 @@ const Home = () => {
         <Container>
           <Row>
             <Col lg="12">
-              <Subtitle subtitle={"Fans Love"} />
-              <h2 className="testimonial__title">What our fans say about us</h2>
+              <Subtitle subtitle={"Khách Hàng Yêu Thích"} />
+              <h2 className="testimonial__title">
+                Hãy xem khách hàng yêu thích điều gì ở các tour và dịch vụ của
+                chúng tôi.
+              </h2>
             </Col>
 
             <Col lg="12">

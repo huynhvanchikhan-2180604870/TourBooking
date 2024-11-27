@@ -1,5 +1,6 @@
 package com.hock.tour_booking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ public class Tour {
 
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private int price;
 
     @Column(name = "duration_days")
     private int durationDays;
@@ -47,7 +48,10 @@ public class Tour {
     @Column(name = "departure_date")
     private LocalDate departureDate;
 
-    private String destination;
+    @ManyToOne
+    @JoinColumn(name = "destination_id")
+    private Destination destination;
+
 
     @ElementCollection
     @CollectionTable(name = "tour_images", joinColumns = @JoinColumn(name = "tour_id"))
@@ -80,4 +84,63 @@ public class Tour {
     @Column(name = "tickets_remaining")
     private int ticketsRemaining;
 
+    @Transient
+    private int reservedTickets = 0;
+
+    public synchronized boolean reserveTickets(int numberOfTickets) {
+        if (this.ticketsRemaining >= numberOfTickets) {
+            this.ticketsRemaining -= numberOfTickets;
+            this.reservedTickets += numberOfTickets;
+            return true;
+        }
+        return false;
+    }
+
+    public synchronized void rollbackReservedTickets() {
+        this.ticketsRemaining += this.reservedTickets;
+        this.reservedTickets = 0;
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tour tour = (Tour) o;
+        return Objects.equals(id, tour.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Tour{" +
+                "id=" + id +
+                ", host=" + host +
+                ", category=" + category +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", itinerary=" + itinerary +
+                ", price=" + price +
+                ", durationDays=" + durationDays +
+                ", departureDate=" + departureDate +
+                ", destination=" + destination +
+                ", images=" + images +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", featured=" + featured +
+                ", reviews=" + reviews +
+                ", maxPeople=" + maxPeople +
+                ", startingLocation='" + startingLocation + '\'' +
+                ", transportation='" + transportation + '\'' +
+                ", ticketsRemaining=" + ticketsRemaining +
+                ", reservedTickets=" + reservedTickets +
+                '}';
+    }
+
+    @OneToMany(mappedBy = "tourReport", cascade = CascadeType.ALL)
+    @JsonIgnore // Hoặc sử dụng @JsonManagedReference nếu cần serialize
+    private List<Report> reports;
 }

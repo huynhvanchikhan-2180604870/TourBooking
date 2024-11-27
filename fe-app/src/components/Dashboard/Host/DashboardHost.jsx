@@ -1,49 +1,51 @@
-import { Grid } from "@mui/material";
-import React from "react";
-import { Route, Routes } from "react-router-dom";
-import "./DashboardHost.css";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux"; // Import useSelector to access Redux store
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Navigation from "./Navigation/Navigation";
 import Dashboard from "./Pages/Dashboard";
+import OrderTracking from "./Pages/OrderTracking";
+import Revenue from "./Pages/Revenue";
 import TourHost from "./Pages/TourHost";
-
-const styleNav = {
-  borderRadius: "20px",
-  outline: "none",
-  fontSize: "20px",
-
-  padding: "15px 20px",
-  height: "100%",
-};
+import "./share/style.css";
 
 const DashboardHost = () => {
-  return (
-    <Grid container className="px-5 lg:px-36 justify-between md:block mt-5 ">
-      <Grid
-        item
-        xs={12}
-        lg={2}
-        className=" lg:block relative md:block navbars"
-        style={styleNav}
-      >
-        <Navigation />
-        {/* <p className="text-center">left part</p> */}
-      </Grid>
+  const {auth} = useSelector((state) => state); // Access user data from Redux store
+  const navigate = useNavigate()
+  
+  // Check for user roles
+  useEffect(() =>{
+    if (auth?.user) {
+      const isHost = auth.user.roles.some((role) => role.name === "ROLE_HOST");
+      // Debugging role check
+      console.log("Is host:", isHost);
 
-      <Grid
-        item
-        xs={12}
-        lg={9.5}
-        className="px-5 lg:px-9 lg:block relative md:hidden ms-auto"
-        style={styleNav}
-      >
+      if (!isHost) {
+        // If not a host, redirect to home page
+        console.log("Redirecting to /home because user is not a host");
+        navigate("/home");
+      }
+    }
+  }, auth.user)
+
+  
+
+  return (
+    <div className="d-flex column-gap-2">
+      {/* Sidebar */}
+      <div className="">
+        <Navigation />
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
         <Routes>
-          <Route path="/" element={<Dashboard />}></Route>
-          <Route path="/tours" element={<TourHost />}></Route>
-          {/* <Route path="/tours/:id" element={<TwitDetails />}></Route> */}
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/tours" element={<TourHost />} />
+          <Route path="/revenue" element={<Revenue />} />
+          <Route path="/orders_tracking" element={<OrderTracking />} />
         </Routes>
-        {/* <p className="text-center">left part</p> */}
-      </Grid>
-    </Grid>
+      </div>
+    </div>
   );
 };
 

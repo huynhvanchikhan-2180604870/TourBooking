@@ -1,10 +1,14 @@
 package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.TourDTO;
+import com.hock.tour_booking.entities.Destination;
 import com.hock.tour_booking.entities.Review;
 import com.hock.tour_booking.entities.Tour;
+import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.repositories.DestinationRepository;
 import com.hock.tour_booking.repositories.TourCustomRepo;
 import com.hock.tour_booking.repositories.TourRepository;
+import com.hock.tour_booking.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +26,10 @@ public class TourServiceImplementation implements TourService {
     private TourRepository tourRepository;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private DestinationRepository destinationRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -48,6 +56,7 @@ public class TourServiceImplementation implements TourService {
     @Override
     public Tour createTour(Tour tour) {
         Tour newTour = new Tour();
+        Destination destination = destinationRepository.findById(tour.getDestination().getId()).orElseThrow(() -> new RuntimeException("Destination not found"));
         newTour.setId(UUID.randomUUID());
         newTour.setTitle(tour.getTitle());
         newTour.setDescription(tour.getDescription());
@@ -56,7 +65,7 @@ public class TourServiceImplementation implements TourService {
         newTour.setCreatedAt(LocalDateTime.now());
         newTour.setUpdatedAt(tour.getUpdatedAt());
         newTour.setHost(tour.getHost());
-        newTour.setDestination(tour.getDestination());
+        newTour.setDestination(destination);
         newTour.setDepartureDate(tour.getDepartureDate());
         newTour.setDurationDays(tour.getDurationDays());
         newTour.setItinerary(tour.getItinerary());
@@ -68,6 +77,9 @@ public class TourServiceImplementation implements TourService {
         newTour.setTicketsRemaining(tour.getMaxPeople());
         newTour.setTransportation(tour.getTransportation());
         Tour saveTour = tourRepository.save(newTour);
+        int newCount = destination.getTours() != null ? destination.getTours().size() : 0;
+        destination.setTourCount(newCount);
+        destinationRepository.save(destination);
         return saveTour;
     }
 
@@ -85,9 +97,7 @@ public class TourServiceImplementation implements TourService {
             newTour.setDescription(tour.getDescription());
         }
 
-        if(tour.getPrice() != null) {
-            newTour.setPrice(tour.getPrice());
-        }
+        newTour.setPrice(tour.getPrice());
 
         if(tour.getCategory() != null) {
             newTour.setCategory(tour.getCategory());
@@ -160,5 +170,20 @@ public class TourServiceImplementation implements TourService {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirect), sortName);
         Pageable pageable = PageRequest.of(page, size, sort);
         return tourRepository.findAll(TourCustomRepo.byHostIdAndSearch(hostId, search), pageable);
+    }
+
+    @Override
+    public List<Tour> findTourByDestination(UUID id){
+        return tourRepository.findTourByDestination(id);
+    }
+
+    @Override
+    public List<Tour> findTourByHostCreateID(UUID hostId){
+        User user  = userRepository.findById(hostId).orElse(null);
+        if(user != null) {
+//            return tourRepositor
+            return tourRepository.findTourByHost(user.getId());
+        }
+        return null;
     }
 }

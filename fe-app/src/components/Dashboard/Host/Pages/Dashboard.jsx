@@ -1,7 +1,12 @@
 import React from "react";
+import HostTourStats from "./HostTourStats ";
 
 const Dashboard = () => {
-  return <React.Fragment>Dashboard</React.Fragment>;
+  return (
+    <React.Fragment>
+      <HostTourStats />
+    </React.Fragment>
+  );
 };
 
 export default Dashboard;

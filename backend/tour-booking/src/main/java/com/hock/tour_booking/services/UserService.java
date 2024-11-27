@@ -9,8 +9,9 @@ import java.util.UUID;
 public interface UserService {
     public User findUserById(UUID id)throws Exception;
     public User findUserProfileByJwt(String jwt)throws Exception;
-    public User updateUser(UUID id, User user)throws Exception;
+    public User updateUser(User user)throws Exception;
     public User addUser(User user)throws Exception;
     public void addRoleForUser(UUID id, String roleName)throws Exception;
     public void updateHostRole(UUID userId, UUID roleId) throws Exception;
+    public void changeUserPassword(UUID id, String oldPassword, String newPassword) throws Exception ;
 }

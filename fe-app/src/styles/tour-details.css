@@ -19,6 +19,7 @@
     border-radius: .5rem;
     border: 1px solid rgb(229, 231, 235);
     padding: 2rem;
+    position: relative;
 }
 
 .tour__info h2 {
@@ -136,4 +137,98 @@
 
 .review__item span {
     font-weight: 500;
+}
+
+.tour__image {
+    position: relative;
+}
+
+/*
+.tour__image span{
+    position: absolute;
+    color: var(--heading-color);
+    background: var(--secondary-color);
+    text-align: center;
+    width: max-content;
+    font-weight: 800;
+    border-radius: 10px;
+    left: 0;
+    margin: 10px 10px 10px ;
+    font-size: 20px;
+    font-family: var(--font-name);
+    padding: 10px;
+}
+
+.tour__image p{
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+    color: #ffff;
+    background: var(--primary-color);
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 10px;
+    border-radius: 13px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.tour__image img{
+    width: 100%;
+    height: 460px;
+} */
+
+.tour__host {
+    position: absolute;
+    color: var(--heading-color);
+    background: var(--secondary-color);
+    text-align: center;
+    width: max-content;
+    font-weight: 800;
+    border-radius: 10px;
+    left: 0;
+    margin: 10px 10px 10px;
+    font-size: 20px;
+    font-family: var(--font-name);
+    padding: 10px;
+}
+
+.info__host {
+    position: absolute;
+    top: -20px;
+    background-color: var(--primary-color);
+    color: #ffff !important;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+}
+
+.isFeature {
+    position: absolute;
+    top: -20px;
+    background-color: var(--secondary-color);
+    color: #ffff !important;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    right: 20%;
+}
+
+.report {
+    position: absolute;
+    top: -20px;
+    background-color: #ffff !important;
+    color: #ffff !important;
+    padding: 4px;
+    border: 1px solid var(--primary-color);
+    outline: none;
+    border-radius: 15px;
+    font-size: 20px;
+    right: 0%;
+}
+
+.report .icon__more i {
+    font-size: 20px !important;
+    color: var(--heading-color) !important;
 }

@@ -31,7 +31,7 @@ export const autReducer = (state = initialState, action) => {
           ...state,
           loading: false,
           error: null,
-          findUser: action.payload,
+          user: action.payload,
         };
 
       case LOGIN_USER_FAILURE:
