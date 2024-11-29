@@ -24,4 +24,6 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
     @Query("SELECT b FROM Booking b WHERE b.tour.id IN :tourIds AND b.bookingDate BETWEEN :start AND :end")
     List<Booking> findBookingsByTourIdsAndDateRange(@Param("tourIds") List<UUID> tourIds, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    @Query("select b from Booking b where b.tour.host.id = ?1")
+    List<Booking> findBookingByHost(UUID hostId);
 }

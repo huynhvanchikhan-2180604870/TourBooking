@@ -186,6 +186,25 @@ public class AuthenticationController {
         return ResponseEntity.ok(roleRepository.save(role));
     }
 
+    @PostMapping("/register-host")
+    public ResponseEntity<UserDTO> registerHost(@RequestBody UserRequets requets) throws Exception{
+        User user = userRepository.findByEmail(requets.getEmail());
+        if(user != null){
+            return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
+        }
+        user.setAddress(requets.getAddress());
+        user.setCin(requets.getCin());
+        user.setEmail(requets.getEmail());
+        user.setUsername(requets.getUsername());
+        user.setPhone_number(requets.getPhone_number());
+        user.setPassword_hash(passwordEncoder.encode(requets.getPassword()));
+        user.setIs_active(false);
+        User savUser = userService.registerHost(user);
+        UserDTO userDTO = UserDtoMapper.toUserDto(savUser);
+        emailService.sendHostRegistrationPendingEmail(userDTO);
+        return new ResponseEntity<UserDTO>(userDTO, HttpStatus.CREATED);
+    }
+
 
     //    @PostMapping("/upgrade")
 //    public ResponseEntity<User> upgradeRole(@RequestBody AuthRequets authRequets){

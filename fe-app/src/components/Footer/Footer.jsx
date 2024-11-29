@@ -33,9 +33,14 @@ const quick_links2 = [
     display: "Đăng nhập",
   },
 
+  
   {
     path: "/register",
     display: "Đăng ký",
+  },
+  {
+    path: "/register-host",
+    display: "Đăng ký làm nhà cung cấp tour",
   },
 ];
 

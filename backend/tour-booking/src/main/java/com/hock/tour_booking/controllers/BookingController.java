@@ -5,6 +5,7 @@ import com.hock.tour_booking.config.ZaloPayConfig;
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.mapper.BookingDtoMapper;
 import com.hock.tour_booking.dtos.request.BookingRequest;
+import com.hock.tour_booking.dtos.response.OrderTrackingResponse;
 import com.hock.tour_booking.dtos.response.PaymentRequest;
 import com.hock.tour_booking.entities.Booking;
 import com.hock.tour_booking.entities.Tour;
@@ -169,5 +170,19 @@ public class BookingController {
         return new ResponseEntity<>(BookingDtoMapper.toBookingDTO(booking), HttpStatus.OK);
     }
 
-
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrders(@RequestHeader("Authorization") String jwt)throws Exception{
+        User user = userService.findUserProfileByJwt(jwt);
+        if (user == null || user.getRoles().stream().anyMatch(role -> role.getName().equals("USER_HOST"))) {
+            return new ResponseEntity<>("User FORBIDDEN", HttpStatus.FORBIDDEN);
+        }
+        System.out.println("HOST: " + user.toString());
+        
+        List<OrderTrackingResponse> orders = bookingService.getOrderTracking(user.getId());
+        System.out.println(orders.size());
+        for(OrderTrackingResponse re : orders){
+            System.out.println("Order: " + re.getTourName());
+        }
+        return new ResponseEntity<>(orders,HttpStatus.OK);
+    }
 }

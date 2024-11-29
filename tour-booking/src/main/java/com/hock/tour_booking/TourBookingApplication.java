@@ -30,50 +30,50 @@ public class TourBookingApplication {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	CommandLineRunner runner(UserSerivce userSerivce){
-		return args -> {
-			userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_USER"));
-			userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_MANAGER"));
-			userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_ADMIN"));
-			userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_SUPER_ADMIN"));
+	// @Bean
+	// CommandLineRunner runner(UserSerivce userSerivce){
+	// 	return args -> {
+	// 		userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_USER"));
+	// 		userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_MANAGER"));
+	// 		userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_ADMIN"));
+	// 		userSerivce.saveRole(new Role(UUID.randomUUID(), "ROLE_SUPER_ADMIN"));
 
 
 
-			userSerivce.saveUser(
-					new User(
-							UUID.randomUUID(),
-							"HOCK",
-							"admin@gmail.com",
-							"admin",
-							"09718000341",
-							"HCM",
-							true,
-							LocalDateTime.now().minusDays((int) (Math.random() * 365)),
-							LocalDateTime.now().minusDays((int) (Math.random() * 365)),
-							new HashSet<>()
-					)
-			);
+	// 		userSerivce.saveUser(
+	// 				new User(
+	// 						UUID.randomUUID(),
+	// 						"HOCK",
+	// 						"admin@gmail.com",
+	// 						"admin",
+	// 						"09718000341",
+	// 						"HCM",
+	// 						true,
+	// 						LocalDateTime.now().minusDays((int) (Math.random() * 365)),
+	// 						LocalDateTime.now().minusDays((int) (Math.random() * 365)),
+	// 						new HashSet<>()
+	// 				)
+	// 		);
 
-			userSerivce.saveUser(
-					new User(
-							UUID.randomUUID(),
-							"KHAN",
-							"khan@gmail.com",
-							"admin",
-							"09718000341",
-							"HCM",
-							true,
-							LocalDateTime.now().minusDays((int) (Math.random() * 365)),
-							LocalDateTime.now().minusDays((int) (Math.random() * 365)),
-							new HashSet<>()
-					)
-			);
+	// 		userSerivce.saveUser(
+	// 				new User(
+	// 						UUID.randomUUID(),
+	// 						"KHAN",
+	// 						"khan@gmail.com",
+	// 						"admin",
+	// 						"09718000341",
+	// 						"HCM",
+	// 						true,
+	// 						LocalDateTime.now().minusDays((int) (Math.random() * 365)),
+	// 						LocalDateTime.now().minusDays((int) (Math.random() * 365)),
+	// 						new HashSet<>()
+	// 				)
+	// 		);
 
-			userSerivce.addRoleToUser("admin@gmail.com","ROLE_USER");
-			userSerivce.addRoleToUser("admin@gmail.com","ROLE_MANAGER");
-			userSerivce.addRoleToUser("khan@gmail.com","ROLE_ADMIN");
-			userSerivce.addRoleToUser("khan@gmail.com","ROLE_SUPER_ADMIN");
-		};
-	}
+	// 		userSerivce.addRoleToUser("admin@gmail.com","ROLE_USER");
+	// 		userSerivce.addRoleToUser("admin@gmail.com","ROLE_MANAGER");
+	// 		userSerivce.addRoleToUser("khan@gmail.com","ROLE_ADMIN");
+	// 		userSerivce.addRoleToUser("khan@gmail.com","ROLE_SUPER_ADMIN");
+	// 	};
+	// }
 }

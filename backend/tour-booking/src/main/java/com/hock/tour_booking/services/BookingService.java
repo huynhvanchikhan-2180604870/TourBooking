@@ -2,6 +2,7 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.RegistrationStat;
+import com.hock.tour_booking.dtos.response.OrderTrackingResponse;
 import com.hock.tour_booking.entities.Booking;
 import com.hock.tour_booking.exception.BookingException;
 
@@ -19,4 +20,6 @@ public interface BookingService {
     public List<Booking> findAllBookingsByUserId(UUID userId);
     public Map<String, List<RegistrationStat>> calculateHostStats(UUID hostId, String period, String startDate, String endDate, UUID tourId);
     public Map<String, Integer> calculateRevenueStatsByHostAndMonth(UUID hostId, LocalDate startOfMonth, LocalDate endOfMonth);
+    // public 
+    public List<OrderTrackingResponse> getOrderTracking(UUID hostId) throws Exception;
 }
