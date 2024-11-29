@@ -2,6 +2,7 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.RegistrationStat;
+import com.hock.tour_booking.dtos.response.OrderTrackingResponse;
 import com.hock.tour_booking.entities.Booking;
 import com.hock.tour_booking.entities.Tour;
 import com.hock.tour_booking.exception.BookingException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +164,27 @@ public class BookingServiceImplementation implements BookingService {
                         booking -> booking.getBookingDate().getMonth().toString() + " " + booking.getBookingDate().getYear(),
                         Collectors.summingInt(Booking::getTotalPrice)
                 ));
+    }
+
+    @Override
+    public List<OrderTrackingResponse> getOrderTracking(UUID hostId) throws Exception{
+        List<Booking> bookings = bookingRepository.findBookingByHost(hostId);
+        
+        List<OrderTrackingResponse> responses = new ArrayList<>();
+        for(Booking booking : bookings){
+            OrderTrackingResponse response = new OrderTrackingResponse();
+            response.setId(booking.getId());
+            response.setBookingDate(booking.getBookingDate());
+            response.setBookingStatus(booking.getBookingStatus());
+            response.setTicketsTotal(booking.getNumPeople());
+            response.setTotalPrice(booking.getTotalPrice());
+            response.setPaymentMethod(booking.getPaymentMethod());
+            response.setTourName(booking.getTour().getTitle());
+            response.setPaymentStatus(booking.getPaymentStatus());
+            responses.add(response);
+            System.out.println("Bookings: " + booking.getTour().getTitle());
+        }
+        return responses;
     }
 
 

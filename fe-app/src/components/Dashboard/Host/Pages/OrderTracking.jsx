@@ -7,149 +7,52 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
 import { amber, blue, green, red } from "@mui/material/colors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UpdateBookingModal from "./UpdateBookingModal"; // Import modal cập nhật
+import { useDispatch, useSelector } from "react-redux";
+import { getOrder } from "../../../../store/Host/Action";
 
 // Màu sắc trạng thái đặt tour
 const statusColors = {
-  PENDING: amber[500],
+  PROCCESS: amber[500],
   APPROVED: green[500],
-  CANCELLED: red[500],
-  ONGOING: blue[500],
+  CANCELED: red[500],
+  CREATED: blue[500],
 };
 
 // Dịch trạng thái sang tiếng Việt
 const translate = {
-  PENDING: "Đang chờ duyệt",
+  PROCCESS: "Đang chờ duyệt",
   APPROVED: "Đã duyệt",
-  CANCELLED: "Đã hủy",
-  ONGOING: "Đang tiến hành",
-  PAID: "Đã thanh toán",
+  CANCELED: "Đã hủy",
+  CREATED: "Đã đăng ký",
+  PAIED: "Đã thanh toán",
   UNPAID: "Chưa thanh toán",
   REFUNDED: "Đã hoàn tiền",
-  NOT_REFUNDED: "Chưa hoàn tiền",
+  "NOT REFUNDED": "Chưa hoàn tiền",
+};
+
+// Hàm định dạng ngày
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm số 0 nếu cần
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng và thêm số 0 nếu cần
+  const year = date.getFullYear(); // Lấy năm
+  return `${day}-${month}-${year}`; // Trả về định dạng dd-mm-yyyy
 };
 
 // Component OrderTracking
 const OrderTracking = () => {
-  const [bookings, setBookings] = useState([
-    // Add a tickets field to each booking
-    {
-      bookingId: "B001",
-      tourName: "Tour Đà Lạt",
-      bookingDate: "2024-01-01",
-      totalPrice: 1500000,
-      paymentMethod: "ZALOPAY",
-      paymentStatus: "PAID",
-      bookingStatus: "APPROVED",
-      refundStatus: null,
-      tickets: 2,
-    },
-    {
-      bookingId: "B002",
-      tourName: "Tour Nha Trang",
-      bookingDate: "2024-02-15",
-      totalPrice: 2500000,
-      paymentMethod: "VNPAY",
-      paymentStatus: "UNPAID",
-      bookingStatus: "PENDING",
-      refundStatus: null,
-      tickets: 5,
-    },
-    {
-      bookingId: "B003",
-      tourName: "Tour Phú Quốc",
-      bookingDate: "2024-03-10",
-      totalPrice: 3000000,
-      paymentMethod: "BANKING",
-      paymentStatus: "PAID",
-      bookingStatus: "ONGOING",
-      refundStatus: null,
-      tickets: 3,
-    },
-    {
-      bookingId: "B004",
-      tourName: "Tour Hội An",
-      bookingDate: "2024-04-05",
-      totalPrice: 1200000,
-      paymentMethod: "ZALOPAY",
-      paymentStatus: "PAID",
-      bookingStatus: "CANCELLED",
-      refundStatus: "NOT_REFUNDED",
-      tickets: 1,
-    },
-    {
-      bookingId: "B005",
-      tourName: "Tour Sapa",
-      bookingDate: "2024-05-20",
-      totalPrice: 1800000,
-      paymentMethod: "VNPAY",
-      paymentStatus: "UNPAID",
-      bookingStatus: "CANCELLED",
-      refundStatus: "REFUNDED",
-      tickets: 4,
-    },
-    {
-      bookingId: "B006",
-      tourName: "Tour Huế",
-      bookingDate: "2024-06-15",
-      totalPrice: 2100000,
-      paymentMethod: "BANKING",
-      paymentStatus: "PAID",
-      bookingStatus: "APPROVED",
-      refundStatus: null,
-      tickets: 2,
-    },
-    {
-      bookingId: "B007",
-      tourName: "Tour Mỹ Tho",
-      bookingDate: "2024-07-22",
-      totalPrice: 1300000,
-      paymentMethod: "ZALOPAY",
-      paymentStatus: "UNPAID",
-      bookingStatus: "PENDING",
-      refundStatus: null,
-      tickets: 3,
-    },
-    {
-      bookingId: "B008",
-      tourName: "Tour Đà Nẵng",
-      bookingDate: "2024-08-30",
-      totalPrice: 2900000,
-      paymentMethod: "VNPAY",
-      paymentStatus: "PAID",
-      bookingStatus: "ONGOING",
-      refundStatus: null,
-      tickets: 2,
-    },
-    {
-      bookingId: "B009",
-      tourName: "Tour Quy Nhơn",
-      bookingDate: "2024-09-10",
-      totalPrice: 3200000,
-      paymentMethod: "BANKING",
-      paymentStatus: "UNPAID",
-      bookingStatus: "CANCELLED",
-      refundStatus: "NOT_REFUNDED",
-      tickets: 2,
-    },
-    {
-      bookingId: "B010",
-      tourName: "Tour Cần Thơ",
-      bookingDate: "2024-10-05",
-      totalPrice: 2200000,
-      paymentMethod: "ZALOPAY",
-      paymentStatus: "PAID",
-      bookingStatus: "APPROVED",
-      refundStatus: null,
-      tickets: 3,
-    },
-  ]);
-
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [page, setPage] = useState(0); // Trạng thái cho trang hiện tại
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Số hàng mỗi trang
+
+  const dispatch = useDispatch();
+  const { host } = useSelector((state) => state);
 
   const openModal = (booking) => {
     setSelectedBooking(booking);
@@ -162,21 +65,24 @@ const OrderTracking = () => {
   };
 
   const updateBookingStatus = (bookingId, newStatus) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.bookingId === bookingId ? { ...b, bookingStatus: newStatus } : b
-      )
-    );
     closeModal();
   };
 
   const refundBooking = (bookingId) => {
-    setBookings((prev) =>
-      prev.map((b) =>
-        b.bookingId === bookingId ? { ...b, refundStatus: "REFUNDED" } : b
-      )
-    );
     closeModal();
+  };
+
+  useEffect(() => {
+    dispatch(getOrder());
+  }, [dispatch]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset về trang đầu tiên khi thay đổi số hàng mỗi trang
   };
 
   return (
@@ -238,11 +144,11 @@ const OrderTracking = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bookings.map((row) => (
-              <TableRow key={row.bookingId} className="text-center">
-                <TableCell className="text-center">{row.bookingId}</TableCell>
+            {host?.orders?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+              <TableRow key={row.id} className="text-center">
+                <TableCell className="text-center">{row.id}</TableCell>
                 <TableCell className="text-center">{row.tourName}</TableCell>
-                <TableCell className="text-center">{row.bookingDate}</TableCell>
+                <TableCell className="text-center">{formatDate(row.bookingDate)}</TableCell>
                 <TableCell className="text-center">
                   {`${row.totalPrice.toLocaleString()} VND`}
                 </TableCell>
@@ -255,18 +161,18 @@ const OrderTracking = () => {
                 <TableCell
                   className="text-center"
                   style={{
-                    backgroundColor: statusColors[row.bookingStatus],
+                    backgroundColor: statusColors[row?.bookingStatus],
                     color: "#fff",
                     borderRadius: "14px",
                     padding: "10px",
                   }}
                 >
-                  {translate[row.bookingStatus]}
+                  {translate[row?.bookingStatus]}
                 </TableCell>
-                <TableCell className="text-center">{row.tickets}</TableCell>
+                <TableCell className="text-center">{row.ticketsTotal}</TableCell>
                 <TableCell className="text-center">
-                  {row.bookingStatus === "CANCELLED"
-                    ? translate[row.refundStatus || "NOT_REFUNDED"]
+                  {row.bookingStatus === "CANCELED"
+                    ? translate[row?.refundStatus || "NOT REFUNDED"]
                     : "N/A"}
                 </TableCell>
                 <TableCell className="text-center">
@@ -282,6 +188,15 @@ const OrderTracking = () => {
             ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={host?.orders?.length || 0}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
 
       {selectedBooking && (

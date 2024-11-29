@@ -146,4 +146,27 @@ public class UserServiceImplementation implements UserService {
         user.setPassword_hash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    @Override
+    public User registerHost(User user) throws Exception{
+        User newUser = new User();
+        Role role = roleRepository.findByName("ROLE_HOST");
+        if (role == null) {
+            throw new Exception("Role not found");
+        }
+
+        newUser.setEmail(user.getEmail());
+        newUser.setId(UUID.randomUUID());
+        newUser.setAddress(user.getAddress());
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword_hash(passwordEncoder.encode(user.getPassword_hash()));
+        newUser.setPhone_number(user.getPhone_number());
+        newUser.setIs_active(user.getIs_active());
+        newUser.setLast_login(user.getLast_login());
+        newUser.getRoles().add(role);
+        // newUser.setVerify_code(user.getVerify_code());
+        newUser.setCin(user.getCin());
+        User saveUser = userRepository.save(newUser);
+        return saveUser;
+    }
 }

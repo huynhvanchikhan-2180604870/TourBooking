@@ -14,6 +14,7 @@ import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
 import AdminDashboard from "../components/Dashboard/Admin/AdminDashboard"
+import RegisterHost from "../pages/RegisterHost";
 
 const Routers = () => {
   return (
@@ -25,6 +26,7 @@ const Routers = () => {
         <Route path="/tours/:id" element={<TourDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/register-host" element={<RegisterHost />} />
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/tours/search" element={<SeachResult />} />
         <Route path="/orders" element={<OrderHistory />} />

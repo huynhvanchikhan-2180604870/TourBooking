@@ -24,6 +24,9 @@ public class UserRequets {
 
     public String address;
 
+    public String cin;
+
+
     public Set<Role> roles = new HashSet<>();
 
 }

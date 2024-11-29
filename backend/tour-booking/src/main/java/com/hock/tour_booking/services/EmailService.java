@@ -1,6 +1,7 @@
 package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
+import com.hock.tour_booking.dtos.UserDTO;
 import com.hock.tour_booking.entities.Report;
 import com.hock.tour_booking.entities.Tour;
 import com.hock.tour_booking.entities.User;
@@ -200,5 +201,45 @@ public class EmailService {
                 lyDo.toString() // Danh sách lý do
         );
     }
+
+    public void sendHostRegistrationPendingEmail(UserDTO userDto) throws Exception {
+    MimeMessage mimeMessage = mailSender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+    // Đặt thông tin người nhận và tiêu đề
+    helper.setTo(userDto.getEmail());
+    helper.setSubject("Thông báo: Yêu cầu đăng ký host đang chờ duyệt");
+
+    // Tạo nội dung email
+    String emailContent = buildHostRegistrationPendingEmailContent(userDto);
+
+    // Đặt nội dung email
+    helper.setText(emailContent, true); // Tham số `true` để xác định nội dung HTML
+
+    // Gửi email
+    mailSender.send(mimeMessage);
+}
+
+private String buildHostRegistrationPendingEmailContent(UserDTO userDto) {
+    return """
+            <!DOCTYPE html>
+            <html lang="vi">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Thông báo đăng ký host</title>
+            </head>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                    <h1 style="color: #333;">Cảm ơn bạn đã đăng ký làm host!</h1>
+                    <p>Xin chào <strong>%s</strong>,</p>
+                    <p>Chúng tôi xin thông báo rằng yêu cầu đăng ký host của bạn đang chờ được duyệt. Đội ngũ của chúng tôi sẽ xem xét yêu cầu của bạn trong thời gian sớm nhất.</p>
+                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
+                    <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                </div>
+            </body>
+            </html> 
+            """.formatted(userDto.getUsername()); // Tên người dùng
+}
 
 }

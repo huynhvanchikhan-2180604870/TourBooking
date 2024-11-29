@@ -11,6 +11,9 @@ import {
   FETCH_TOURS_FAILURE,
   FETCH_TOURS_REQUEST,
   FETCH_TOURS_SUCCESS,
+  GET_ALL_ORDERS_FAILURE,
+  GET_ALL_ORDERS_REQUEST,
+  GET_ALL_ORDERS_SUCCESS,
 } from "./ActionType";
 
 const initialState = {
@@ -19,6 +22,7 @@ const initialState = {
   error: null,
   totalPages: 0,
   totalElements: 0,
+  orders:[]
   // pageSize: 10, // Default page size
 };
 
@@ -28,7 +32,14 @@ const hostReducer = (state = initialState, action) => {
     case ADD_TOUR_REQUEST:
     case EDIT_TOUR_REQUEST:
     case DELETE_TOUR_REQUEST:
+    case GET_ALL_ORDERS_REQUEST:
       return { ...state, loading: true, error: null };
+    case GET_ALL_ORDERS_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        orders: action.payload,
+      };
     case FETCH_TOURS_SUCCESS:
       return {
         ...state,
@@ -65,6 +76,7 @@ const hostReducer = (state = initialState, action) => {
     case ADD_TOUR_FAILURE:
     case EDIT_TOUR_FAILURE:
     case DELETE_TOUR_FAILURE:
+    case GET_ALL_ORDERS_FAILURE:
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

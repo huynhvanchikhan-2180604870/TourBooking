@@ -10,6 +10,9 @@ import {
   FETCH_TOURS_FAILURE,
   FETCH_TOURS_REQUEST,
   FETCH_TOURS_SUCCESS,
+  GET_ALL_ORDERS_FAILURE,
+  GET_ALL_ORDERS_REQUEST,
+  GET_ALL_ORDERS_SUCCESS,
 } from "./ActionType";
 
 export const fetchToursOfHost = (params, token) => async (dispatch) => {
@@ -149,5 +152,24 @@ export const createTour = (tourData, token) => async (dispatch) => {
       type: ADD_TOUR_FAILURE,
       payload: error.response ? error.response.data.message : error.message,
     });
+  }
+};
+
+
+export const getOrder = () => async (dispatch) => {
+  dispatch({ type: GET_ALL_ORDERS_REQUEST });
+  const token = localStorage.getItem("jwt");
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/v2/booking/orders`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Orders data response: ", response.data);
+    dispatch({ type: GET_ALL_ORDERS_SUCCESS, payload: response.data });
+  } catch (error) {
+    console.error("Error during booking: ", error);
+    dispatch({ type: GET_ALL_ORDERS_FAILURE, payload: error.toString() });
   }
 };

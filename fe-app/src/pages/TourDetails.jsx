@@ -12,11 +12,13 @@ import ReportTourModal from "../shared/ReportTourModal";
 import { findTourById, getAllTours, postReview } from "../store/Tour/Action";
 import "../styles/tour-details.css";
 import calculateAvgRating from "../utils/avgRating";
+import BookingRules from "./BookingRules";
 
 const TourDetails = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [openReportModal, setOpenReportModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openBookingRules, setOpenBookingRules] = useState(true)
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,6 +33,10 @@ const TourDetails = () => {
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
+
+  const handleOpenBookingRules = () =>{setOpenBookingRules(true)}
+  const handleCloseBookingRules = () =>{setOpenBookingRules(false)}
+
   const formik = useFormik({
     initialValues: {
       comment: "",
@@ -280,6 +286,9 @@ const TourDetails = () => {
           handleClose={handleCloseReportModal}
           tourId={id}
         />
+      </section>
+      <section>
+        <BookingRules open={openBookingRules}  handleClose={handleCloseBookingRules}/>
       </section>
     </>
   );
