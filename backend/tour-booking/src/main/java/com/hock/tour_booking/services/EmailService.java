@@ -165,35 +165,35 @@ public class EmailService {
         }
 
         return """
-            <!DOCTYPE html>
-            <html lang="vi">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Xác nhận gửi báo cáo</title>
-            </head>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
-                <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
-                    <h1 style="color: #333;">Báo cáo của bạn đã được gửi thành công!</h1>
-                    <p>Xin chào quý khách,</p>
-                    <p>Chúng tôi đã nhận được báo cáo của bạn cho tour:</p>
-                    <ul>
-                        <li><strong>Tên tour:</strong> %s</li>
-                        <li><strong>Mã báo cáo:</strong> %s</li>
-                        <li><strong>Ngày báo cáo:</strong> %s</li>
-                        <li><strong>Thời gian:</strong> %s</li>
-                    </ul>
-                    <h2 style="color: #333;">Chi tiết lý do báo cáo:</h2>
-                    <ul>
-                        %s
-                    </ul>
-                    <p style="color: #555;">Chúng tôi xin lỗi vì những bất tiện mà bạn đã gặp phải. Đội ngũ của chúng tôi sẽ xem xét báo cáo này và xử lý nhanh nhất có thể.</p>
-                    <p style="color: #555;">Nếu cần hỗ trợ thêm, vui lòng liên hệ chúng tôi qua email: support@tourbooking.com.</p>
-                    <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
-                </div>
-            </body>
-            </html>
-            """.formatted(
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Xác nhận gửi báo cáo</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                        <h1 style="color: #333;">Báo cáo của bạn đã được gửi thành công!</h1>
+                        <p>Xin chào quý khách,</p>
+                        <p>Chúng tôi đã nhận được báo cáo của bạn cho tour:</p>
+                        <ul>
+                            <li><strong>Tên tour:</strong> %s</li>
+                            <li><strong>Mã báo cáo:</strong> %s</li>
+                            <li><strong>Ngày báo cáo:</strong> %s</li>
+                            <li><strong>Thời gian:</strong> %s</li>
+                        </ul>
+                        <h2 style="color: #333;">Chi tiết lý do báo cáo:</h2>
+                        <ul>
+                            %s
+                        </ul>
+                        <p style="color: #555;">Chúng tôi xin lỗi vì những bất tiện mà bạn đã gặp phải. Đội ngũ của chúng tôi sẽ xem xét báo cáo này và xử lý nhanh nhất có thể.</p>
+                        <p style="color: #555;">Nếu cần hỗ trợ thêm, vui lòng liên hệ chúng tôi qua email: support@tourbooking.com.</p>
+                        <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                    </div>
+                </body>
+                </html>
+                """.formatted(
                 report.getTourReport().getTitle(), // Tên tour
                 report.getId(), // Mã báo cáo
                 formattedDate, // Ngày báo cáo định dạng dd-MM-yyyy
@@ -203,43 +203,178 @@ public class EmailService {
     }
 
     public void sendHostRegistrationPendingEmail(UserDTO userDto) throws Exception {
-    MimeMessage mimeMessage = mailSender.createMimeMessage();
-    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-    // Đặt thông tin người nhận và tiêu đề
-    helper.setTo(userDto.getEmail());
-    helper.setSubject("Thông báo: Yêu cầu đăng ký host đang chờ duyệt");
+        // Đặt thông tin người nhận và tiêu đề
+        helper.setTo(userDto.getEmail());
+        helper.setSubject("Thông báo: Yêu cầu đăng ký host đang chờ duyệt");
 
-    // Tạo nội dung email
-    String emailContent = buildHostRegistrationPendingEmailContent(userDto);
+        // Tạo nội dung email
+        String emailContent = buildHostRegistrationPendingEmailContent(userDto);
 
-    // Đặt nội dung email
-    helper.setText(emailContent, true); // Tham số `true` để xác định nội dung HTML
+        // Đặt nội dung email
+        helper.setText(emailContent, true); // Tham số `true` để xác định nội dung HTML
 
-    // Gửi email
-    mailSender.send(mimeMessage);
-}
+        // Gửi email
+        mailSender.send(mimeMessage);
+    }
 
-private String buildHostRegistrationPendingEmailContent(UserDTO userDto) {
-    return """
-            <!DOCTYPE html>
-            <html lang="vi">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Thông báo đăng ký host</title>
-            </head>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
-                <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
-                    <h1 style="color: #333;">Cảm ơn bạn đã đăng ký làm host!</h1>
-                    <p>Xin chào <strong>%s</strong>,</p>
-                    <p>Chúng tôi xin thông báo rằng yêu cầu đăng ký host của bạn đang chờ được duyệt. Đội ngũ của chúng tôi sẽ xem xét yêu cầu của bạn trong thời gian sớm nhất.</p>
-                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
-                    <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
-                </div>
-            </body>
-            </html> 
-            """.formatted(userDto.getUsername()); // Tên người dùng
-}
+    private String buildHostRegistrationPendingEmailContent(UserDTO userDto) {
+        return """
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Thông báo đăng ký host</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                        <h1 style="color: #333;">Cảm ơn bạn đã đăng ký làm host!</h1>
+                        <p>Xin chào <strong>%s</strong>,</p>
+                        <p>Chúng tôi xin thông báo rằng yêu cầu đăng ký host của bạn đang chờ được duyệt. Đội ngũ của chúng tôi sẽ xem xét yêu cầu của bạn trong thời gian sớm nhất.</p>
+                        <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
+                        <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                    </div>
+                </body>
+                </html> 
+                """.formatted(userDto.getUsername()); // Tên người dùng
+    }
+
+    public void sendTourStatusUpdateToHost(Tour tour) throws Exception {
+        // Lấy thông tin người chủ sở hữu tour (Host) từ đối tượng Tour
+        User host = tour.getHost(); // Giả sử Tour có một trường 'host' là đối tượng User
+
+        if (host != null) {
+            // Tạo MimeMessage cho email
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            // Đặt thông tin người nhận và tiêu đề
+            helper.setTo(host.getEmail());
+            helper.setSubject("Cập nhật trạng thái tour - " + tour.getTitle());
+
+            // Tạo nội dung email
+            String emailContent = buildTourStatusUpdateEmailContent(tour);
+
+            // Đặt nội dung email (HTML)
+            helper.setText(emailContent, true);
+
+            // Gửi email
+            mailSender.send(mimeMessage);
+        } else {
+            throw new Exception("Host information is not available for the tour.");
+        }
+    }
+
+    // Phương thức tạo nội dung email
+    private String buildTourStatusUpdateEmailContent(Tour tour) {
+        // Dịch trạng thái tour sang tiếng Việt
+        String statusDescription = switch (tour.getStatus()) {
+            case "CREATED" -> "Mới tạo";
+            case "APPROVED" -> "Đã duyệt";
+            case "CANCELLED" -> "Đã hủy";
+            default -> "Chưa xác định";
+        };
+
+        // Tạo nội dung email HTML
+        return """
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Cập nhật trạng thái tour</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                        <h1 style="color: #333;">Cập nhật trạng thái tour</h1>
+                        <p>Xin chào <strong>%s</strong>,</p>
+                        <p>Chúng tôi xin thông báo rằng trạng thái của tour <strong>%s</strong> của bạn đã thay đổi. Dưới đây là chi tiết:</p>
+                        <ul>
+                            <li><strong>Mã tour:</strong> %s</li>
+                            <li><strong>Tên tour:</strong> %s</li>
+                            <li><strong>Trạng thái hiện tại:</strong> %s</li>
+                        </ul>
+                        <p style="color: #555;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
+                        <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                    </div>
+                </body>
+                </html>
+                """.formatted(
+                tour.getHost().getUsername(),  // Tên Host
+                tour.getTitle(),  // Tên Tour
+                tour.getId(),  // Mã Tour
+                tour.getTitle(),  // Tên Tour
+                statusDescription  // Trạng thái Tour
+        );
+    }
+
+    public void sendTourPostedToHost(Tour tour) throws Exception {
+        // Lấy thông tin người chủ sở hữu tour (Host) từ đối tượng Tour
+        User host = tour.getHost(); // Giả sử Tour có một trường 'host' là đối tượng User
+
+        if (host != null) {
+            // Tạo MimeMessage cho email
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            // Đặt thông tin người nhận và tiêu đề
+            helper.setTo(host.getEmail());
+            helper.setSubject("Tour mới của bạn đã được đăng tải thành công - " + tour.getTitle());
+
+            // Tạo nội dung email
+            String emailContent = buildTourPostedEmailContent(tour);
+
+            // Đặt nội dung email (HTML)
+            helper.setText(emailContent, true);
+
+            // Gửi email
+            mailSender.send(mimeMessage);
+        } else {
+            throw new Exception("Host information is not available for the tour.");
+        }
+    }
+
+    // Phương thức tạo nội dung email
+    private String buildTourPostedEmailContent(Tour tour) {
+        // Tạo nội dung email HTML
+        return """
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Thông báo tour mới</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+            <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                <h1 style="color: #333;">Tour của bạn đã được đăng tải thành công!</h1>
+                <p>Xin chào <strong>%s</strong>,</p>
+                <p>Chúng tôi xin thông báo rằng tour <strong>%s</strong> của bạn đã được đăng tải thành công và hiện có sẵn trên hệ thống. Dưới đây là các chi tiết:</p>
+                <ul>
+                    <li><strong>Mã tour:</strong> %s</li>
+                    <li><strong>Tên tour:</strong> %s</li>
+                    <li><strong>Ngày khởi hành:</strong> %s</li>
+                    <li><strong>Trạng thái:</strong> %s</li>
+                    <li><strong>Mô tả tour:</strong> %s</li>
+                </ul>
+                <p style="color: #555;">Chúng tôi sẽ tiếp tục theo dõi và hỗ trợ nếu cần thiết. Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
+                <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+            </div>
+        </body>
+        </html>
+        """.formatted(
+                tour.getHost().getUsername(),  // Tên Host
+                tour.getTitle(),  // Tên Tour
+                tour.getId(),  // Mã Tour
+                tour.getTitle(),  // Tên Tour
+                tour.getDepartureDate(),  // Ngày khởi hành
+                "Mới tạo",  // Trạng thái Tour, giả sử tour mới có trạng thái "Mới tạo"
+                tour.getDescription()  // Mô tả Tour
+        );
+    }
+
 
 }

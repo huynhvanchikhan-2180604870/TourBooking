@@ -1,5 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 import { useFormik } from "formik";
+import { enqueueSnackbar } from "notistack";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,6 +9,7 @@ import { Button, Col, Container, Form, FormGroup, Row } from "reactstrap";
 import * as Yup from "yup";
 import loginImg from "../assets/images/login.png";
 import userImg from "../assets/images/user.png";
+import { API_BASE_URL } from "../config/api";
 import { loginGoole, loginUser } from "../store/Auth/Action";
 import "../styles/login.css";
 
@@ -21,9 +24,48 @@ const Login = () => {
       password: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      dispatch(loginUser(values));
-      navigate("/home");
+    onSubmit: async (values) => {
+      // dispatch(loginUser(values));
+      // navigate("/home");
+      try {
+        // Check status
+        const request = {
+          email: formik.values.email,
+        };
+        const response = await axios.post(
+          `${API_BASE_URL}/api/v1/auth/check`,
+          request,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const data = response.data;
+        console.log("check: ", data.status);
+
+        if (data.status) {
+          enqueueSnackbar(`${data.message}`, {
+            variant: "error",
+          });
+          return;
+        }
+
+        // Proceed to login
+        dispatch(loginUser(values));
+        enqueueSnackbar(`Đăng nhập thành công`, {
+          variant: "success",
+        });
+        navigate("/home");
+      } catch (error) {
+        enqueueSnackbar(`Error during status check:${error}`, {
+          variant: "error",
+        });
+        enqueueSnackbar("An error occurred. Please try again later.", {
+          variant: "error",
+        });
+      }
     },
   });
   const navigate = useNavigate();
@@ -44,7 +86,36 @@ const Login = () => {
     try {
       // Lấy credential từ Google
       const token = credentialResponse.credential;
-      console.log("Backend response:", token);
+      // console.log("Backend response:", credentialResponse);
+      // const request = {
+      //   email: formik.values.email,
+      // };
+      // const response = await axios.post(
+      //   `${API_BASE_URL}/api/v1/auth/check`,
+      //   request,
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+
+      // const data = response.data;
+      // console.log("check: ", data.status);
+
+      // if (data.status) {
+      //   enqueueSnackbar(`${data.message}`, {
+      //     variant: "error",
+      //   });
+      //   return;
+      // }
+
+      // // Proceed to login
+      // dispatch(loginUser(formik.values));
+      // enqueueSnackbar(`Đăng nhập thành công`, {
+      //   variant: "success",
+      // });
+      // navigate("/home");
       dispatch(loginGoole(token));
       navigate("/home");
     } catch (error) {
@@ -55,35 +126,6 @@ const Login = () => {
   const errorMessage = (error) => {
     console.log(error);
   };
-
-  const responseFacebook = (response) => {
-    try {
-      if (response.status === "unknown") {
-        console.error("Failed to login with Facebook");
-        // Xử lý lỗi đăng nhập
-      } else {
-        console.log("Facebook login success: ", response);
-        // Xử lý token và thông tin người dùng nhận được từ Facebook
-        const { name, email, picture, accessToken } = response;
-        console.log("Name: ", name);
-        console.log("Email: ", email);
-        console.log("Picture: ", picture.data.url);
-        console.log("Access Token: ", accessToken);
-        // Bạn có thể gửi thông tin này lên server hoặc lưu trữ cục bộ
-      }
-    } catch (error) {}
-  };
-
-  const handleFacebookCallback = (response) => {
-    if (response?.status === "unknown") {
-      console.error("Sorry!", "Something went wrong with facebook Login.");
-      return;
-    }
-    console.log(response);
-    // console will print following object for you.
-  };
-
-  const handleLogin = () => {};
 
   return (
     <section>

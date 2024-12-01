@@ -2,11 +2,13 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.RegistrationStat;
+import com.hock.tour_booking.dtos.RevenueStatsDTO;
 import com.hock.tour_booking.dtos.response.OrderTrackingResponse;
 import com.hock.tour_booking.entities.Booking;
 import com.hock.tour_booking.exception.BookingException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,4 +24,5 @@ public interface BookingService {
     public Map<String, Integer> calculateRevenueStatsByHostAndMonth(UUID hostId, LocalDate startOfMonth, LocalDate endOfMonth);
     // public 
     public List<OrderTrackingResponse> getOrderTracking(UUID hostId) throws Exception;
+    public List<RevenueStatsDTO> getRevenueStats(String timePeriod, LocalDateTime startDate, LocalDateTime endDate);
 }

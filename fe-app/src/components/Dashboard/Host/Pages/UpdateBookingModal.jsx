@@ -1,13 +1,13 @@
-import React from "react";
 import {
-  Modal,
   Box,
   Button,
   FormControl,
-  Select,
   MenuItem,
+  Modal,
+  Select,
   Typography,
 } from "@mui/material";
+import React from "react";
 
 const UpdateBookingModal = ({
   open,
@@ -42,10 +42,11 @@ const UpdateBookingModal = ({
         </Typography>
         <FormControl fullWidth sx={{ mt: 2 }}>
           <Select value={booking.bookingStatus} onChange={handleStatusChange}>
-            <MenuItem value="PENDING">Đang chờ duyệt</MenuItem>
+            <MenuItem value="PROCCESS">Đang chờ duyệt</MenuItem>
             <MenuItem value="APPROVED">Đã duyệt</MenuItem>
-            <MenuItem value="CANCELLED">Đã hủy</MenuItem>
+            <MenuItem value="CANCELED">Đã hủy</MenuItem>
             <MenuItem value="ONGOING">Đang tiến hành</MenuItem>
+            <MenuItem value="SUCCESS">Đã hoàn thành</MenuItem>
           </Select>
         </FormControl>
         {booking.bookingStatus === "CANCELLED" &&

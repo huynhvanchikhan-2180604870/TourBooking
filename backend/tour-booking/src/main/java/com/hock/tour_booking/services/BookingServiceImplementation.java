@@ -2,6 +2,7 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.RegistrationStat;
+import com.hock.tour_booking.dtos.RevenueStatsDTO;
 import com.hock.tour_booking.dtos.response.OrderTrackingResponse;
 import com.hock.tour_booking.entities.Booking;
 import com.hock.tour_booking.entities.Tour;
@@ -187,5 +188,8 @@ public class BookingServiceImplementation implements BookingService {
         return responses;
     }
 
-
+    @Override
+    public List<RevenueStatsDTO> getRevenueStats(String timePeriod, LocalDateTime startDate, LocalDateTime endDate) {
+        return bookingRepository.findRevenueStatsByTimePeriod(timePeriod, startDate, endDate);
+    }
 }

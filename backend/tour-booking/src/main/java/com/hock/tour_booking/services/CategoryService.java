@@ -11,4 +11,5 @@ public interface CategoryService {
     public CategoryDTO findCategoryById(UUID id);
     public CategoryDTO createCategory(CategoryDTO categoryDTO);
     public Category findById(UUID id);
+    public void deleteCategory(UUID id);
 }

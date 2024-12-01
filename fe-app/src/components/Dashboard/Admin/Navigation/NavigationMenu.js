@@ -6,7 +6,7 @@ export const navigationMenu = [
   {
     title: "Dashboard",
     icon: <HomeIcon />,
-    path: "/admin/",
+    path: "/admin",
     subMenu: [
       { title: "Trang chủ", path: "/admin" },
       {
@@ -20,11 +20,12 @@ export const navigationMenu = [
     icon: <ExploreIcon />,
     path: "/admin/tours",
     subMenu: [
-      { title: "Quản lý đặt tour", path: "/admin/tours" },
+      { title: "Quản lý đặt tour", path: "/admin/bookings" },
       {
         title: "Kiểm duyệt tours",
-        path: "/admin/orders_tracking",
+        path: "/admin/tours",
       },
+      { title: "Quản lý danh mục tours", path: "/admin/categories" },
     ], // Sub-menu for Tours
   },
   {
@@ -44,7 +45,7 @@ export const navigationMenu = [
     icon: <CircleNotificationsIcon />,
     path: "/admin/user",
     subMenu: [
-      { title: "Quản lý thông người dùng", path: "/admin/users/info" },
+      { title: "Quản lý thông người dùng", path: "/admin/users" },
       { title: "Duyệt đăng ký NCC", path: "/admin/host" },
     ], // Sub-menu for Supports
   },

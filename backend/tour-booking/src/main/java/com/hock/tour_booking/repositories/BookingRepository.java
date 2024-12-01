@@ -1,5 +1,6 @@
 package com.hock.tour_booking.repositories;
 
+import com.hock.tour_booking.dtos.RevenueStatsDTO;
 import com.hock.tour_booking.entities.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,20 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
     @Query("select b from Booking b where b.tour.host.id = ?1")
     List<Booking> findBookingByHost(UUID hostId);
+    @Query(value = "SELECT " +
+            "  CASE " +
+            "    WHEN DATE_FORMAT(b.booking_date, '%Y-%m-%d') = :timePeriod THEN 'Day' " +
+            "    WHEN DATE_FORMAT(b.booking_date, '%Y-%m') = :timePeriod THEN 'Month' " +
+            "    WHEN DATE_FORMAT(b.booking_date, '%Y-%m') BETWEEN DATE_FORMAT(:startDate, '%Y-%m') AND DATE_FORMAT(:endDate, '%Y-%m') THEN 'Quarter' " +
+            "    ELSE 'Year' " +
+            "  END AS timePeriod, " +
+            "  SUM(b.final_price) AS totalRevenue, " +
+            "  COUNT(b.id) AS totalBookings " +
+            "FROM bookings b " +
+            "WHERE b.booking_date BETWEEN :startDate AND :endDate " +
+            "GROUP BY timePeriod", nativeQuery = true)
+    List<RevenueStatsDTO> findRevenueStatsByTimePeriod(
+            @Param("timePeriod") String timePeriod,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

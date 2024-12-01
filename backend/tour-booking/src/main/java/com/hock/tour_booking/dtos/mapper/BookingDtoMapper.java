@@ -25,6 +25,8 @@ public class BookingDtoMapper {
         bookingDTO.setCreatedAt(booking.getCreatedAt());
         bookingDTO.setUpdatedAt(booking.getUpdatedAt());
         bookingDTO.setQrBase64(booking.getQrBase64());
+        bookingDTO.setFullname(booking.getUser().getUsername());
+        bookingDTO.setTourname(booking.getTour().getTitle());
         return bookingDTO;
     }
 

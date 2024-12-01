@@ -54,6 +54,8 @@ public class User{
 
     @Column(name = "verify_code")
     private String verify_code;
+    @Column(name = "is_ban")
+    private Boolean is_ban;
 
     @Override
     public String toString() {

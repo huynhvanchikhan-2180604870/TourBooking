@@ -6,14 +6,17 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
   TablePagination,
+  TableRow,
 } from "@mui/material";
-import { amber, blue, green, red } from "@mui/material/colors";
+import { amber, blue, green, grey, red, yellow } from "@mui/material/colors";
+import axios from "axios";
+import { enqueueSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
-import UpdateBookingModal from "./UpdateBookingModal"; // Import modal cập nhật
 import { useDispatch, useSelector } from "react-redux";
+import { API_BASE_URL } from "../../../../config/api";
 import { getOrder } from "../../../../store/Host/Action";
+import UpdateBookingModal from "./UpdateBookingModal"; // Import modal cập nhật
 
 // Màu sắc trạng thái đặt tour
 const statusColors = {
@@ -21,14 +24,18 @@ const statusColors = {
   APPROVED: green[500],
   CANCELED: red[500],
   CREATED: blue[500],
+  ONGOING: yellow[500],
+  SUCCESS: grey[400],
 };
 
 // Dịch trạng thái sang tiếng Việt
 const translate = {
   PROCCESS: "Đang chờ duyệt",
+  ONGOING: "Đang tiến hành",
   APPROVED: "Đã duyệt",
   CANCELED: "Đã hủy",
   CREATED: "Đã đăng ký",
+  SUCCESS: "Đã hoàn thành",
   PAIED: "Đã thanh toán",
   UNPAID: "Chưa thanh toán",
   REFUNDED: "Đã hoàn tiền",
@@ -38,8 +45,8 @@ const translate = {
 // Hàm định dạng ngày
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm số 0 nếu cần
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng và thêm số 0 nếu cần
+  const day = String(date.getDate()).padStart(2, "0"); // Lấy ngày và thêm số 0 nếu cần
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Lấy tháng và thêm số 0 nếu cần
   const year = date.getFullYear(); // Lấy năm
   return `${day}-${month}-${year}`; // Trả về định dạng dd-mm-yyyy
 };
@@ -64,7 +71,31 @@ const OrderTracking = () => {
     setModalOpen(false);
   };
 
-  const updateBookingStatus = (bookingId, newStatus) => {
+  const updateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      const jwt = localStorage.getItem("jwt");
+      const updateStatus = {
+        id: selectedBooking.id,
+        status: newStatus,
+      };
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/v2/tours/update-status`,
+        updateStatus,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Lỗi không cập nhật trạng thái đơn hàng:", error);
+      enqueueSnackbar("Cập nhật trang thái thất bại, vui lòng thử lại.", {
+        variant: "error",
+      });
+    }
+    console.log("BookingID and Status: ", selectedBooking.id, newStatus);
     closeModal();
   };
 
@@ -144,48 +175,54 @@ const OrderTracking = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {host?.orders?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-              <TableRow key={row.id} className="text-center">
-                <TableCell className="text-center">{row.id}</TableCell>
-                <TableCell className="text-center">{row.tourName}</TableCell>
-                <TableCell className="text-center">{formatDate(row.bookingDate)}</TableCell>
-                <TableCell className="text-center">
-                  {`${row.totalPrice.toLocaleString()} VND`}
-                </TableCell>
-                <TableCell className="text-center">
-                  {row.paymentMethod}
-                </TableCell>
-                <TableCell className="text-center">
-                  {translate[row.paymentStatus]}
-                </TableCell>
-                <TableCell
-                  className="text-center"
-                  style={{
-                    backgroundColor: statusColors[row?.bookingStatus],
-                    color: "#fff",
-                    borderRadius: "14px",
-                    padding: "10px",
-                  }}
-                >
-                  {translate[row?.bookingStatus]}
-                </TableCell>
-                <TableCell className="text-center">{row.ticketsTotal}</TableCell>
-                <TableCell className="text-center">
-                  {row.bookingStatus === "CANCELED"
-                    ? translate[row?.refundStatus || "NOT REFUNDED"]
-                    : "N/A"}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => openModal(row)}
+            {host?.orders
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow key={row.id} className="text-center">
+                  <TableCell className="text-center">{row.id}</TableCell>
+                  <TableCell className="text-center">{row.tourName}</TableCell>
+                  <TableCell className="text-center">
+                    {formatDate(row.bookingDate)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {`${row.totalPrice.toLocaleString()} VND`}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {row.paymentMethod}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {translate[row.paymentStatus]}
+                  </TableCell>
+                  <TableCell
+                    className="text-center"
+                    style={{
+                      backgroundColor: statusColors[row?.bookingStatus],
+                      color: "#fff",
+                      borderRadius: "14px",
+                      padding: "10px",
+                    }}
                   >
-                    Cập nhật
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                    {translate[row?.bookingStatus]}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {row.ticketsTotal}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {row.bookingStatus === "CANCELED"
+                      ? translate[row?.refundStatus || "NOT REFUNDED"]
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => openModal(row)}
+                    >
+                      Cập nhật
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
         <TablePagination

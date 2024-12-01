@@ -34,6 +34,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import AdminDashboard from "./components/Dashboard/Admin/AdminDashboard";
 import DashboardHost from "./components/Dashboard/Host/DashboardHost";
 import Layout from "./components/Layout/Layout";
 import { getUserProfile } from "./store/Auth/Action";
@@ -90,6 +91,7 @@ function MainApp() {
       <Routes>
         <Route path="/*" element={<Layout />} />
         <Route path="/dashboard/*" element={<DashboardHost />} />
+        <Route path="/admin/*" element={<AdminDashboard />} />
       </Routes>
     </div>
   );

@@ -28,4 +28,6 @@ public class BookingDTO {
     private LocalDateTime updatedAt;
     private String qrBase64;
     private String ztranstionId;
+    private String fullname;
+    private String tourname;
 }

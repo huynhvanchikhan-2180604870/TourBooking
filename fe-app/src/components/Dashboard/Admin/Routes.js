@@ -1,13 +1,13 @@
 import { Login } from "@mui/icons-material";
 import Register from "../../../pages/Register";
-import DashboardHost from "./DashboardHost";
+import AdminDashboard from "./AdminDashboard";
 
 export const routes = [
   {
     path: "/index",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
-    component: <DashboardHost />,
+    component: <AdminDashboard />,
     layout: "/admin",
   },
   {

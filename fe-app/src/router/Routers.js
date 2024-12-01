@@ -1,11 +1,16 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import AdminDashboard from "../components/Dashboard/Admin/AdminDashboard";
+import BookingsList from "../components/Dashboard/Admin/page/BookingsList.jsx";
+import ToursManager from "../components/Dashboard/Admin/page/ToursManager";
+import UserManager from "../components/Dashboard/Admin/page/UserManager.jsx";
 import DashboardHost from "../components/Dashboard/Host/DashboardHost";
 import OrderTracking from "../components/Dashboard/Host/Pages/OrderTracking";
 import Revenue from "../components/Dashboard/Host/Pages/Revenue";
 import TourHost from "../components/Dashboard/Host/Pages/TourHost";
 import OrderHistory from "../pages/OrderHistory";
 import Profile from "../pages/Profile";
+import RegisterHost from "../pages/RegisterHost";
 import ThankYou from "../pages/ThankYou";
 import Home from "./../pages/Home";
 import Login from "./../pages/Login";
@@ -13,8 +18,6 @@ import Register from "./../pages/Register";
 import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
-import AdminDashboard from "../components/Dashboard/Admin/AdminDashboard"
-import RegisterHost from "../pages/RegisterHost";
 
 const Routers = () => {
   return (
@@ -37,6 +40,9 @@ const Routers = () => {
         <Route path="/dashboard/revenue" element={<Revenue />} />
         <Route path="/dashboard/orders_tracking" element={<OrderTracking />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/tours" element={<ToursManager />} />
+        <Route path="/admin/bookings" element={<BookingsList />} />
+        <Route path="/admin/users" element={<UserManager />} />
       </Routes>
     </div>
   );

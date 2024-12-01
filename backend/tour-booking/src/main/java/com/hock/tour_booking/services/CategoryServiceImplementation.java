@@ -44,4 +44,10 @@ public class CategoryServiceImplementation implements CategoryService {
     public Category findById(UUID id) {
         return categoryRepository.findById(id).get();
     }
+
+    @Override
+    public void deleteCategory(UUID id){
+        Category category = findById(id);
+        categoryRepository.delete(category);
+    }
 }

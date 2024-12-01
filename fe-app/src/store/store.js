@@ -4,11 +4,13 @@ import { autReducer } from "./Auth/Reducer";
 import hostReducer from "./Host/Reducer";
 import tourReducer from "./Tour/Reducer";
 import bookingReducer from "./Booking/Reducer";
+import adminReducer from './Admin/Reducer'
 const rootReducers = combineReducers({
   auth: autReducer,
   host: hostReducer,
   tour: tourReducer,
   booking: bookingReducer,
+  admin: adminReducer,
 });
 
 export const store = legacy_createStore(rootReducers, applyMiddleware(thunk));

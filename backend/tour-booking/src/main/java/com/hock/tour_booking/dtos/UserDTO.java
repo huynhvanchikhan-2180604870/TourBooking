@@ -18,4 +18,5 @@ public class UserDTO {
     private boolean isActive;
     private Set<RoleDTO> roles = new HashSet<>();
     private String cin;
+    private Boolean is_ban;
 }

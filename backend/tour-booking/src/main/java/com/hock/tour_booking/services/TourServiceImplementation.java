@@ -69,7 +69,7 @@ public class TourServiceImplementation implements TourService {
         newTour.setDepartureDate(tour.getDepartureDate());
         newTour.setDurationDays(tour.getDurationDays());
         newTour.setItinerary(tour.getItinerary());
-        newTour.setStatus(tour.getStatus());
+        newTour.setStatus("CREATED");
         newTour.setFeatured(tour.isFeatured());
         newTour.setImages(tour.getImages());
         newTour.setMaxPeople(tour.getMaxPeople());

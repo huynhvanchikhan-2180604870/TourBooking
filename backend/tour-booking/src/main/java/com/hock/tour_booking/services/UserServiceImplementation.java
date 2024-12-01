@@ -1,6 +1,7 @@
 package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.config.JwtProvider;
+import com.hock.tour_booking.dtos.UserDTO;
 import com.hock.tour_booking.dtos.request.UserRequets;
 import com.hock.tour_booking.entities.Role;
 import com.hock.tour_booking.entities.User;
@@ -78,7 +79,7 @@ public class UserServiceImplementation implements UserService {
             user.setCin(req.getCin());
         }
         user.setIs_active(user.getIs_active());
-
+        user.setIs_ban(user.getIs_ban());
         return userRepository.save(user);
     }
 
@@ -101,6 +102,7 @@ public class UserServiceImplementation implements UserService {
         user.getRoles().add(role);
         user.setVerify_code(req.getVerify_code());
         user.setCin(req.getCin());
+        user.setIs_ban(false);
         // Lưu người dùng
         User saveUser  = userRepository.save(user);
         System.out.println("User new: " + saveUser.toString());
@@ -168,5 +170,36 @@ public class UserServiceImplementation implements UserService {
         newUser.setCin(user.getCin());
         User saveUser = userRepository.save(newUser);
         return saveUser;
+    }
+
+    @Override
+    public User lockUserAccount(UUID userId) throws Exception {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setIs_ban(true);  // Giả sử có trường accountLocked trong entity User
+            return updateUser(user);
+        }
+        return null;
+    }
+
+    @Override
+    // Phương thức mở khóa tài khoản người dùng
+    public User unlockUserAccount(UUID userId) throws Exception {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setIs_ban(false);
+            return updateUser(user);
+        }
+        return null;
+    }
+
+    @Override
+    public List<User> findAll(){
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User findUserByEmail(String email)throws Exception{
+        return userRepository.findByEmail(email);
     }
 }

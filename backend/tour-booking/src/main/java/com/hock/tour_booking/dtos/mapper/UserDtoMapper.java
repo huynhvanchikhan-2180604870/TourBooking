@@ -21,6 +21,7 @@ public class UserDtoMapper {
         userDTO.setUsername(user.getUsername());
         userDTO.setRoles(setRoleUserToRoleUserDTO(user));
         userDTO.setCin(user.getCin());
+        userDTO.setIs_ban(user.getIs_ban());
         return userDTO;
     }
 

@@ -1,9 +1,12 @@
 package com.hock.tour_booking.controllers;
 
+import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.CategoryDTO;
 import com.hock.tour_booking.dtos.RegistrationStat;
 import com.hock.tour_booking.dtos.TourDTO;
+import com.hock.tour_booking.dtos.mapper.BookingDtoMapper;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
+import com.hock.tour_booking.dtos.request.OrderStatusRequest;
 import com.hock.tour_booking.entities.*;
 import com.hock.tour_booking.repositories.RoleCustomRepo;
 import com.hock.tour_booking.repositories.RoleRepository;
@@ -36,6 +39,8 @@ public class TourHostController {
     private DestinationService destinationService;
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private EmailService emailService;
 
 
     @PostMapping("/create")
@@ -77,7 +82,7 @@ public class TourHostController {
         tour.setStartingLocation(tourDTO.getStartingLocation());
         tour.setTransportation(tourDTO.getTransportation());
         Tour saveTour = tourService.createTour(tour);
-
+        emailService.sendTourPostedToHost(saveTour);
         TourDTO savedTourDTO = TourDtoMapper.toTourDTO(saveTour);
         System.out.println("Create tour of host: " + user.getUsername() + "\n" +
                 savedTourDTO.toString());
@@ -239,6 +244,24 @@ public class TourHostController {
         LocalDate endOfMonth = startOfMonth.withDayOfMonth(startOfMonth.lengthOfMonth());
         Map<String, Integer> revenueStats = bookingService.calculateRevenueStatsByHostAndMonth(hostId, startOfMonth, endOfMonth);
         return ResponseEntity.ok(revenueStats);
+    }
+
+    @PostMapping("/update-status")
+    public ResponseEntity<?> updateStatusForUser(@RequestHeader("Authorization") String jwt, @RequestBody OrderStatusRequest request) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        if(!user.getRoles().stream().anyMatch(role -> "ROLE_HOST".equals(role.getName()))) {
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        }
+
+        Booking booking = bookingService.findBookingById(request.getId());
+        if (booking == null) {
+            return new ResponseEntity<>("Booking Not Found", HttpStatus.NOT_FOUND);
+        }
+
+        booking.setBookingStatus(request.getStatus());
+        BookingDTO bookingDTO = BookingDtoMapper.toBookingDTO(booking);
+        bookingService.updateBooking(bookingDTO);
+        return new ResponseEntity<>("Booking Updated", HttpStatus.ACCEPTED);
     }
 
 }

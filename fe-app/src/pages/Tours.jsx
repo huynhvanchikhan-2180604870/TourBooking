@@ -10,15 +10,18 @@ import { getAllTours } from "../store/Tour/Action";
 import "../styles/tour.css";
 
 import queryString from "query-string";
+
 const Tours = () => {
   const { tour } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const location = useLocation();
+
   useEffect(() => {
     const params = queryString.parse(location.search);
     dispatch(getAllTours({ page: 0, size: 12 }));
   }, []);
+
   const handlePageChange = (pageNumber) => {
     dispatch(getAllTours({ page: pageNumber, size: 12 }));
   };
@@ -50,7 +53,6 @@ const Tours = () => {
             <Col xs="2">
               <SearchBar onSearch={handleSearch} />
             </Col>
-            
           </Row>
         </Container>
       </section>
@@ -63,14 +65,17 @@ const Tours = () => {
             ) : tour?.error ? (
               <p>Error: {tour?.error}</p>
             ) : (
-              tour?.tours?.map(
-                (item, index) =>
-                  item.ticketsRemaining >= 1 && (
-                    <Col lg="3" key={item.id} className="mb-4">
-                      <TourCard tour={item} />
-                    </Col>
-                  )
-              )
+              // Lọc ra các tour có trạng thái APPROVED
+              tour?.tours
+                ?.filter((item) => item.status === "APPROVED") // Lọc theo trạng thái APPROVED
+                .map(
+                  (item, index) =>
+                    item.ticketsRemaining >= 1 && (
+                      <Col lg="3" key={item.id} className="mb-4">
+                        <TourCard tour={item} />
+                      </Col>
+                    )
+                )
             )}
             <Col lg="12">
               <div className="pagination d-flex align-items-center justify-content-center mt-4 gap-3">

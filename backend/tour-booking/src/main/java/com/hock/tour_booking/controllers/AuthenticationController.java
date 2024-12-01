@@ -8,6 +8,7 @@ import com.hock.tour_booking.dtos.mapper.RoleDtoMapper;
 import com.hock.tour_booking.dtos.mapper.UserDtoMapper;
 import com.hock.tour_booking.dtos.request.*;
 import com.hock.tour_booking.dtos.response.AuthResponse;
+import com.hock.tour_booking.dtos.response.CheckUserStatusResponse;
 import com.hock.tour_booking.entities.Role;
 import com.hock.tour_booking.entities.User;
 import com.hock.tour_booking.repositories.RoleRepository;
@@ -60,7 +61,7 @@ public class AuthenticationController {
     private static final String GOOGLE_TOKEN_VERIFICATION_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequets authRequets) {
+    public ResponseEntity<?> login(@RequestBody AuthRequets authRequets) {
         String email = authRequets.getEmail();
         String password = authRequets.getPassword();
         User userLogin = userRepository.findByEmail(email);
@@ -87,6 +88,7 @@ public class AuthenticationController {
         String address = requets.getAddress();
         User isEmailExist = userRepository.findByEmail(email);
         if (isEmailExist != null) {
+
             throw new Exception("Email Already Exists");
         }
 
@@ -132,7 +134,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<AuthResponse> authenticateGoogleToken(@RequestBody String request) {
+    public ResponseEntity<?> authenticateGoogleToken(@RequestBody String request) {
         String token = request;
         String verificationUrl = GOOGLE_TOKEN_VERIFICATION_URL + token;
         RestTemplate restTemplate = new RestTemplate();
@@ -148,12 +150,24 @@ public class AuthenticationController {
                 String pictureUrl = (String) payload.get("picture");
                 String password = (String) payload.get("email");
                 User isEmailExist = userRepository.findByEmail(email);
+                CheckUserStatusResponse response_auth = new CheckUserStatusResponse();
                 if (isEmailExist != null) {
-                    Authentication auth = new UsernamePasswordAuthenticationToken(email, email);
+                    // Kiểm tra trạng thái tài khoản người dùng
+
+//                    // Kiểm tra trạng thái cấm của người dùng
+//                    if (isEmailExist.getIs_ban()) {
+//                        response_auth.setMessage("Tài khoản bạn bị khóa vui lòng liên hệ hotline để được hổ trợ");
+//                        response_auth.setStatus(true);
+//                        return new ResponseEntity<>(response_auth, HttpStatus.OK);
+//                    } else {
+//                        response_auth.setMessage("Đăng nhập thành công");
+//                        response_auth.setStatus(false);
+//                    }
+                    Authentication auth = new UsernamePasswordAuthenticationToken(email, email);  // Unreachable
                     SecurityContextHolder.getContext().setAuthentication(auth);
                     String jwt = jwtProvider.generateToken(auth);
                     authResponse = new AuthResponse(jwt, true);
-                    return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.ACCEPTED);
+                    return new ResponseEntity<>(authResponse, HttpStatus.ACCEPTED);
                 } else {
                     User createUser = new User();
                     createUser.setEmail(email);
@@ -236,5 +250,23 @@ public class AuthenticationController {
         List<Role> roles = roleRepository.findAll();
         List<RoleDTO> roleDTOs = RoleDtoMapper.toRoleDTOs(roles);
         return new ResponseEntity<>(roleDTOs, HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("check")
+    public ResponseEntity<?> checkStatus(@RequestBody AuthRequets authRequets) throws Exception{
+        User user = userService.findUserByEmail(authRequets.getEmail());
+        CheckUserStatusResponse response = new CheckUserStatusResponse();
+        if(user == null){
+            return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
+        }
+
+        if(!user.getIs_ban()){
+            response.setMessage("Đăng nhập thành công");
+            response.setStatus(false);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        response.setMessage("Tài khoản bạn bị khóa vui lòng liên hệ hotline để được hổ trợ");
+        response.setStatus(true);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
