@@ -21,40 +21,4 @@ public class TourBookingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TourBookingApplication.class, args);
 	}
-//	@Bean
-//	CommandLineRunner runner(UserService userSerivce, RoleService roleService) {
-//		return args -> {
-//			roleService.saveRole(new Role(UUID.randomUUID(), "ROLE_USER"));
-//			roleService.saveRole(new Role(UUID.randomUUID(), "ROLE_MANAGER"));
-//			roleService.saveRole(new Role(UUID.randomUUID(), "ROLE_ADMIN"));
-//			roleService.saveRole(new Role(UUID.randomUUID(), "ROLE_SUPER_ADMIN"));
-//
-//
-//
-////			userSerivce.saveUser(
-////					new UserRequets(
-////							"HOCK",
-////							"admin@gmail.com",
-////							"admin",
-////							"09718000341",
-////							"HCM",
-////							new HashSet<>()
-////					)
-////			);
-//
-////			userSerivce.saveUser(
-////					new UserRequets(
-////							"HOCK",
-////							"admin@gmail.com",
-////							"admin",
-////							"09718000341",
-////							"HCM",
-////							new HashSet<>()
-////					)
-////			);
-//
-////			userSerivce.addRoleToUserDefault("admin@gmail.com");
-//
-//		};
-//	}
 }

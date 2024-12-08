@@ -9,6 +9,9 @@ import {
     Grid,
 } from '@mui/material';
 import '../shared/register-host.css'
+import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
+import { enqueueSnackbar } from 'notistack';
 
 const RegisterHost = () => {
     const formik = useFormik({
@@ -18,7 +21,8 @@ const RegisterHost = () => {
             email: '',
             password: '',
             address: '',
-            phone_number: '',
+            phoneNumber: '',
+            
         },
         validationSchema: Yup.object({
             username: Yup.string().required('Tên công ty là bắt buộc'),
@@ -30,11 +34,29 @@ const RegisterHost = () => {
                 .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
                 .required('Mật khẩu là bắt buộc'),
             address: Yup.string().required('Địa chỉ là bắt buộc'),
-            phone_number: Yup.string().required('Số điện thoại là bắt buộc'),
+            phoneNumber: Yup.string().required('Số điện thoại là bắt buộc'),
         }),
-        onSubmit: (values) => {
-            console.log('Form values:', values);
+        onSubmit: async (values, { resetForm }) => {
+            try {
+                const response = await axios.post(`${API_BASE_URL}/api/v1/auth/register-host`, values);
+                const data = response.data;
+                if(data.status){
+                    enqueueSnackbar(`${data.message}`, {
+                        variant: "success",
+                    });
+                    resetForm(); // Reset form khi gửi thành công
+                } else {
+                    enqueueSnackbar(`${data.message}`, {
+                        variant: "error",
+                    });
+                }
+            } catch (error) {
+                enqueueSnackbar('Đã xảy ra lỗi khi gửi dữ liệu. Vui lòng thử lại.', {
+                    variant: "error",
+                });
+            }
         },
+        
     });
 
     useEffect(() =>{
@@ -120,14 +142,14 @@ const RegisterHost = () => {
                             <TextField
                                 fullWidth
                                 autoComplete="disable"
-                                id="phone_number"
-                                name="phone_number"
+                                id="phoneNumber"
+                                name="phoneNumber"
                                 label="Số điện thoại"
-                                value={formik.values.phone_number}
+                                value={formik.values.phoneNumber}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
-                                helperText={formik.touched.phone_number && formik.errors.phone_number}
+                                error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                                helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
                             />
                         </Grid>
                         <Grid item xs={12}>

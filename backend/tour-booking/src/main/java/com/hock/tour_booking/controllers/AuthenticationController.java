@@ -2,19 +2,23 @@ package com.hock.tour_booking.controllers;
 
 
 import com.hock.tour_booking.config.JwtProvider;
+import com.hock.tour_booking.dtos.HostRegisterDTO;
 import com.hock.tour_booking.dtos.RoleDTO;
 import com.hock.tour_booking.dtos.UserDTO;
+import com.hock.tour_booking.dtos.mapper.HostRegisterDtoMapper;
 import com.hock.tour_booking.dtos.mapper.RoleDtoMapper;
 import com.hock.tour_booking.dtos.mapper.UserDtoMapper;
 import com.hock.tour_booking.dtos.request.*;
 import com.hock.tour_booking.dtos.response.AuthResponse;
 import com.hock.tour_booking.dtos.response.CheckUserStatusResponse;
+import com.hock.tour_booking.entities.HostRegister;
 import com.hock.tour_booking.entities.Role;
 import com.hock.tour_booking.entities.User;
 import com.hock.tour_booking.repositories.RoleRepository;
 import com.hock.tour_booking.repositories.UserRepository;
 import com.hock.tour_booking.services.CustomUserDetailsServiceImplementation;
 import com.hock.tour_booking.services.EmailService;
+import com.hock.tour_booking.services.HostRegisterService;
 import com.hock.tour_booking.utils.settings.VerifyCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +61,8 @@ public class AuthenticationController {
     private CustomUserDetailsServiceImplementation customUserDetailsService;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private HostRegisterService hostRegisterService;
 
     private static final String GOOGLE_TOKEN_VERIFICATION_URL = "https://oauth2.googleapis.com/tokeninfo?id_token=";
 
@@ -200,24 +206,24 @@ public class AuthenticationController {
         return ResponseEntity.ok(roleRepository.save(role));
     }
 
-    @PostMapping("/register-host")
-    public ResponseEntity<UserDTO> registerHost(@RequestBody UserRequets requets) throws Exception{
-        User user = userRepository.findByEmail(requets.getEmail());
-        if(user != null){
-            return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
-        }
-        user.setAddress(requets.getAddress());
-        user.setCin(requets.getCin());
-        user.setEmail(requets.getEmail());
-        user.setUsername(requets.getUsername());
-        user.setPhone_number(requets.getPhone_number());
-        user.setPassword_hash(passwordEncoder.encode(requets.getPassword()));
-        user.setIs_active(false);
-        User savUser = userService.registerHost(user);
-        UserDTO userDTO = UserDtoMapper.toUserDto(savUser);
-        emailService.sendHostRegistrationPendingEmail(userDTO);
-        return new ResponseEntity<UserDTO>(userDTO, HttpStatus.CREATED);
-    }
+//    @PostMapping("/register-host")
+//    public ResponseEntity<UserDTO> registerHost(@RequestBody UserRequets requets) throws Exception{
+//        User user = userRepository.findByEmail(requets.getEmail());
+//        if(user != null){
+//            return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
+//        }
+//        user.setAddress(requets.getAddress());
+//        user.setCin(requets.getCin());
+//        user.setEmail(requets.getEmail());
+//        user.setUsername(requets.getUsername());
+//        user.setPhone_number(requets.getPhone_number());
+//        user.setPassword_hash(passwordEncoder.encode(requets.getPassword()));
+//        user.setIs_active(false);
+//        User savUser = userService.registerHost(user);
+//        UserDTO userDTO = UserDtoMapper.toUserDto(savUser);
+//        emailService.sendHostRegistrationPendingEmail(userDTO);
+//        return new ResponseEntity<UserDTO>(userDTO, HttpStatus.CREATED);
+//    }
 
 
     //    @PostMapping("/upgrade")
@@ -268,5 +274,28 @@ public class AuthenticationController {
         response.setMessage("Tài khoản bạn bị khóa vui lòng liên hệ hotline để được hổ trợ");
         response.setStatus(true);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/register-host")
+    public ResponseEntity<?> registerHost(@RequestBody HostRegisterDTO request) throws Exception{
+        HostRegister newHost = hostRegisterService.checkExist(request.getEmail());
+        CheckUserStatusResponse reponse = new CheckUserStatusResponse();
+        if(newHost != null){
+            reponse.setMessage("Email của bạn đã từng đăng ký làm nhà cung cấp tour. Nếu đang trong quá trình chờ duyệt vui longf không đăng kys lại");
+            reponse.setStatus(false);
+            return new ResponseEntity<>(reponse, HttpStatus.OK);
+        }
+        newHost = new HostRegister();
+        newHost.setEmail(request.getEmail());
+        newHost.setCin(request.getCin());
+        newHost.setAddress(request.getAddress());
+        newHost.setPhoneNumber(request.getPhoneNumber());
+        newHost.setUsername(request.getUsername());
+        newHost.setPassword(request.getPassword());
+        HostRegister save = hostRegisterService.register(newHost);
+        emailService.sendHostRegistrationApprovalPending(save);
+        reponse.setMessage("Cảm ơn bạn đã gửi thông tin đăng ký làm nhà cung cấp tour. Chúng tôi sẽ xem xét và phản hồi lại sớm nhất qua email đăng ký");
+        reponse.setStatus(true);
+        return new ResponseEntity<>(reponse, HttpStatus.OK);
     }
 }

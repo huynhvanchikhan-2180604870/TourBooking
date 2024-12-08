@@ -46,7 +46,7 @@ export const navigationMenu = [
     path: "/admin/user",
     subMenu: [
       { title: "Quản lý thông người dùng", path: "/admin/users" },
-      { title: "Duyệt đăng ký NCC", path: "/admin/host" },
+      { title: "Duyệt đăng ký NCC", path: "/admin/host-register" },
     ], // Sub-menu for Supports
   },
   {

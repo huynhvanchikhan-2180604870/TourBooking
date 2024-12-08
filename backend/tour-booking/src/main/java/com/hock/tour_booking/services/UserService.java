@@ -1,6 +1,7 @@
 package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.request.UserRequets;
+import com.hock.tour_booking.entities.HostRegister;
 import com.hock.tour_booking.entities.Role;
 import com.hock.tour_booking.entities.User;
 
@@ -20,4 +21,5 @@ public interface UserService {
     public User unlockUserAccount(UUID userId) throws Exception ;
     public List<User> findAll()throws Exception;
     public User findUserByEmail(String email)throws Exception;
+    public  User addHost(HostRegister hostRegister)throws  Exception;
 }

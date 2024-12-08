@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -189,7 +190,7 @@ public class BookingServiceImplementation implements BookingService {
     }
 
     @Override
-    public List<RevenueStatsDTO> getRevenueStats(String timePeriod, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<RevenueStatsDTO> getRevenueStats(String timePeriod, ZonedDateTime startDate, ZonedDateTime endDate) {
         return bookingRepository.findRevenueStatsByTimePeriod(timePeriod, startDate, endDate);
     }
 }

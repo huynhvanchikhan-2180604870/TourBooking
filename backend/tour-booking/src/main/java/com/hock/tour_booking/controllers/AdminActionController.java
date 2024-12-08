@@ -2,13 +2,11 @@ package com.hock.tour_booking.controllers;
 
 import com.hock.tour_booking.dtos.*;
 import com.hock.tour_booking.dtos.mapper.BookingDtoMapper;
+import com.hock.tour_booking.dtos.mapper.HostRegisterDtoMapper;
 import com.hock.tour_booking.dtos.mapper.TourDtoMapper;
 import com.hock.tour_booking.dtos.mapper.UserDtoMapper;
 import com.hock.tour_booking.dtos.request.UpdateTourStatus;
-import com.hock.tour_booking.entities.Booking;
-import com.hock.tour_booking.entities.Category;
-import com.hock.tour_booking.entities.Tour;
-import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.entities.*;
 import com.hock.tour_booking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import com.hock.tour_booking.dtos.request.UserRequets;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +38,8 @@ public class AdminActionController {
     private BookingService bookingService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private HostRegisterService hostRegisterService;
 //    @Autowired
 //    private RevenueService revenueService;
 
@@ -178,19 +179,55 @@ public class AdminActionController {
     }
 
     @GetMapping("/revenue/stats")
-    public ResponseEntity<List<RevenueStatsDTO>> getRevenueStats(
+    public ResponseEntity<?> getRevenueStats(
+            @RequestHeader("Authorization") String jwt,
             @RequestParam String timePeriod,
             @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
+            @RequestParam(required = false) String endDate) throws Exception {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        User user = userService.findUserProfileByJwt(jwt);
+        if (user == null || !user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        }
 
-        LocalDateTime start = startDate != null ? LocalDateTime.parse(startDate, formatter) : null;
-        LocalDateTime end = endDate != null ? LocalDateTime.parse(endDate, formatter) : null;
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+
+        ZonedDateTime start = startDate != null ? ZonedDateTime.parse(startDate, formatter) : null;
+        ZonedDateTime end = endDate != null ? ZonedDateTime.parse(endDate, formatter) : null;
 
         List<RevenueStatsDTO> stats = bookingService.getRevenueStats(timePeriod, start, end);
         return ResponseEntity.ok(stats);
     }
 
+    @GetMapping("/register-hosts")
+    public ResponseEntity<?> findAllRegisterHost(@RequestHeader("Authorization") String jwt) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        if (user == null || !user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        }
+        List<HostRegister> list = hostRegisterService.findAll();
+        List<HostRegisterDTO> response = HostRegisterDtoMapper.toHostRegisters(list);
+        System.out.println("Host data" + response.size());
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("accept-host/{id}")
+    public ResponseEntity<?> accpeptHost(@RequestHeader("Authorization") String jwt, @PathVariable UUID id) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+        if (user == null || !user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+            return new ResponseEntity<>("Forbidden", HttpStatus.FORBIDDEN);
+        }
+
+        HostRegister hostRegister = hostRegisterService.findById(id);
+        if(hostRegister == null){
+            return new ResponseEntity<>("Not found", HttpStatus.NOT_FOUND);
+        }
+
+        User userhost = userService.addHost(hostRegister);
+        System.out.println("admin" + user.toString());
+        System.out.println("host" + userhost.toString());
+        UserDTO userDTO = UserDtoMapper.toUserDto(userhost);
+        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    }
 
 }

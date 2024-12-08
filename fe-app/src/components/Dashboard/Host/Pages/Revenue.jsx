@@ -37,18 +37,21 @@ const Revenue = () => {
     if (!date) return; // Do not proceed if no date is selected
     const year = date.slice(0, 4);
     const month = date.slice(5, 7);
-    const hostId = auth?.user?.id;
+    const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                        "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+    const revenueKey = `${monthNames[parseInt(month, 10) - 1]} ${year}`;
 
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/api/v2/tours/revenue/${hostId}/${year}/${month}`,
+        `${API_BASE_URL}/api/v2/tours/revenue/${auth?.user?.id}/${year}/${month}`,
         { headers: { Authorization: `Bearer ${jwt}` } }
       );
-      const revenueKey = `NOVEMBER 2024`; // Adjusted to directly use the key shown in your API response
-      const revenue = response.data[revenueKey]; // Dynamically fetch revenue based on month/year
-      if (revenue) {
+
+      const revenue = response.data[revenueKey]; // Using dynamic revenueKey to fetch revenue
+      console.log("response: ", response.data);
+      if (revenue !== undefined) {
         setChartData({
-          labels: [`November ${year}`], // Adjust dynamically based on selected month
+          labels: [revenueKey],
           datasets: [
             {
               label: "Doanh thu (VND)",
@@ -73,7 +76,6 @@ const Revenue = () => {
       setHasRevenue(false);
     }
   };
-
   const exportToPDF = () => {
     const doc = new jsPDF();
     doc.text(
