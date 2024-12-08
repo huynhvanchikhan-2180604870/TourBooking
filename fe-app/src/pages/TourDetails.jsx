@@ -13,12 +13,19 @@ import { findTourById, getAllTours, postReview } from "../store/Tour/Action";
 import "../styles/tour-details.css";
 import calculateAvgRating from "../utils/avgRating";
 import BookingRules from "./BookingRules";
+import ChatModal from "../shared/ChatModal";
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 const TourDetails = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [openReportModal, setOpenReportModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [openBookingRules, setOpenBookingRules] = useState(true)
+  const [openBookingRules, setOpenBookingRules] = useState(true);
+  const [showChatModal, setShowChatModal] = useState(false);
+
+  const handleOpenChat = () => setShowChatModal(true);
+  const handleCloseChat = () => setShowChatModal(false);
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,14 +35,19 @@ const TourDetails = () => {
   };
   const { id } = useParams();
   const { tour } = useSelector((state) => state);
+  const { auth } = useSelector((state) => state);
   const dispatch = useDispatch();
   // Toggle menu visibility
   const toggleMenu = () => {
     setShowMenu(!showMenu);
   };
 
-  const handleOpenBookingRules = () =>{setOpenBookingRules(true)}
-  const handleCloseBookingRules = () =>{setOpenBookingRules(false)}
+  const handleOpenBookingRules = () => {
+    setOpenBookingRules(true);
+  };
+  const handleCloseBookingRules = () => {
+    setOpenBookingRules(false);
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -55,7 +67,7 @@ const TourDetails = () => {
   };
   const handleCloseReportModal = () => {
     setOpenReportModal(false);
-    setAnchorEl(false)
+    setAnchorEl(false);
   };
 
   const handlePageChange = (pageNumber) => {
@@ -276,6 +288,16 @@ const TourDetails = () => {
             <Col lg="4">
               <Booking tour={tour?.tourDetails} avgRating={avgRating} />
             </Col>
+            <Col lg="4">
+              <Button
+                variant="outlined"
+                onClick={handleOpenChat}
+                sx={{ position: "fixed", right: 20, bottom: 20, borderRadius:"50%", border:'none' }}
+              >
+                <QuestionAnswerIcon style={{fontSize: '50px' ,color: '#FFCFB3'}}/>
+              </Button>
+              <ChatModal open={showChatModal} hostName={tour?.tourDetails?.host?.username} userName={auth?.user?.username} handleClose={handleCloseChat} />
+            </Col>
           </Row>
         </Container>
       </section>
@@ -288,7 +310,10 @@ const TourDetails = () => {
         />
       </section>
       <section>
-        <BookingRules open={openBookingRules}  handleClose={handleCloseBookingRules}/>
+        <BookingRules
+          open={openBookingRules}
+          handleClose={handleCloseBookingRules}
+        />
       </section>
     </>
   );

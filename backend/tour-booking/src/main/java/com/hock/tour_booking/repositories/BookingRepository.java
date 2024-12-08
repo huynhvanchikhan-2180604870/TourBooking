@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,6 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             "GROUP BY timePeriod", nativeQuery = true)
     List<RevenueStatsDTO> findRevenueStatsByTimePeriod(
             @Param("timePeriod") String timePeriod,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+            @Param("startDate") ZonedDateTime startDate,
+            @Param("endDate") ZonedDateTime endDate);
 }

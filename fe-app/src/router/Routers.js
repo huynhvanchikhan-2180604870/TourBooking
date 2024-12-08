@@ -18,6 +18,7 @@ import Register from "./../pages/Register";
 import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
+import RegisterHostsList from "../components/Dashboard/Admin/page/RegisterHostsList.jsx";
 
 const Routers = () => {
   return (
@@ -43,6 +44,7 @@ const Routers = () => {
         <Route path="/admin/tours" element={<ToursManager />} />
         <Route path="/admin/bookings" element={<BookingsList />} />
         <Route path="/admin/users" element={<UserManager />} />
+        <Route path="/admin/host-register" element={<RegisterHostsList />} />
       </Routes>
     </div>
   );

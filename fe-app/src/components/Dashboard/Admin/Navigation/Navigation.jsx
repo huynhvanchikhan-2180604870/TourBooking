@@ -58,21 +58,21 @@ const Navigation = () => {
               className="text-start"
             >
               <Button
-                fullWidth
-                variant="contained"
-                color="primary"
+                // fullWidth
+                // variant="contained"
+                color=""
                 sx={{
                   borderRadius: "20px",
-                  padding: "10px 20px",
-                  justifyContent: "flex-start",
-                  textAlign: "left",
+                  // padding: "10px 20px",
+                  justifyContent: "left",
+                  textAlign: "center",
                   display: "flex",
-                  alignItems: "left",
+                  alignItems: "center",
                 }}
               >
                 {item.icon}
                 <Typography variant="body1" className="text-start">
-                  {item.title}
+                  {" "}{item.title}
                 </Typography>
               </Button>
             </AccordionSummary>
@@ -83,12 +83,17 @@ const Navigation = () => {
                 <Button
                   key={subIndex}
                   variant="text"
-                  className="submenu-btn"
+                  className="submenu-btn mt-2 mb-2 text-center"
+                  // color="primary"
                   onClick={() => handleMenuItemClick(subItem.path)}
                   sx={{
                     padding: "8px 20px",
                     justifyContent: "flex-start",
                     textAlign: "left",
+                    background:'white',
+                    color:'black',
+                    border: "1px solid black",
+                    borderRadius: '13px'
                   }}
                 >
                   {subItem.title}

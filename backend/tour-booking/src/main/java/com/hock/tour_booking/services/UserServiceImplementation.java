@@ -3,16 +3,20 @@ package com.hock.tour_booking.services;
 import com.hock.tour_booking.config.JwtProvider;
 import com.hock.tour_booking.dtos.UserDTO;
 import com.hock.tour_booking.dtos.request.UserRequets;
+import com.hock.tour_booking.entities.HostRegister;
 import com.hock.tour_booking.entities.Role;
 import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.repositories.HostRegisterRepository;
 import com.hock.tour_booking.repositories.RoleCustomRepo;
 import com.hock.tour_booking.repositories.RoleRepository;
 import com.hock.tour_booking.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.Host;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +34,10 @@ public class UserServiceImplementation implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private RoleCustomRepo roleCustomRepo;
+    @Autowired
+    private HostRegisterRepository hostRegisterRepository;
+    @Autowired
+    private HostRegisterService hostRegisterService;
 
     @Override
     public User findUserById(UUID id) throws Exception{
@@ -201,5 +209,33 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User findUserByEmail(String email)throws Exception{
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public  User addHost(HostRegister hostRegister)throws  Exception{
+        User newUser = userRepository.findByEmail(hostRegister.getEmail());
+        if (newUser != null){
+             throw new  Exception ("User exist");
+        }
+        Role role = roleRepository.findByName("ROLE_HOST");
+        if (role == null) {
+            throw new Exception("Role not found");
+        }
+        newUser = new User();
+        newUser.setId(UUID.randomUUID());
+        newUser.setAddress(hostRegister.getAddress());
+        newUser.setCin(hostRegister.getCin());
+        newUser.setUsername(hostRegister.getUsername());
+        newUser.setIs_active(true);
+        newUser.setEmail(hostRegister.getEmail());
+        newUser.setIs_ban(false);
+        newUser.setPhone_number(hostRegister.getPhoneNumber());
+        newUser.setPassword_hash(passwordEncoder.encode(hostRegister.getPassword()));
+        newUser.getRoles().add(role);
+        newUser.setLast_login(LocalDateTime.now());
+        User save = userRepository.save(newUser);
+        hostRegister.setActive("Active");
+        hostRegisterRepository.save(hostRegister);
+        return save;
     }
 }

@@ -2,6 +2,7 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.UserDTO;
+import com.hock.tour_booking.entities.HostRegister;
 import com.hock.tour_booking.entities.Report;
 import com.hock.tour_booking.entities.Tour;
 import com.hock.tour_booking.entities.User;
@@ -36,7 +37,6 @@ public class EmailService {
         mailSender.send(message);
     }
 
-
     public void sendEmailWithBookingDetails(String toEmail, BookingDTO bookingDto) throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -69,7 +69,8 @@ public class EmailService {
         for (int i = 0; i < itinerary.size(); i++) {
             itineraryTable.append("<tr>")
                     .append("<td style='border: 1px solid #ddd; padding: 8px;'>Day ").append(i + 1).append("</td>")
-                    .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(itinerary.get(i)).append("</td>")
+                    .append("<td style='border: 1px solid #ddd; padding: 8px;'>").append(itinerary.get(i))
+                    .append("</td>")
                     .append("</tr>");
         }
         itineraryTable.append("</table>");
@@ -104,16 +105,17 @@ public class EmailService {
                     </div>
                 </body>
                 </html>
-                """.formatted(
-                user.getUsername(), // Tên người dùng
-                bookingDto.getId(), // Booking ID
-                tour.getTitle(), // Tên tour
-                bookingDto.getBookingDate(), // Ngày đặt
-                bookingDto.getPaymentStatus(), // Trạng thái thanh toán
-                bookingDto.getTotalPrice(), // Tổng tiền
-                itineraryTable.toString(), // Bảng hành trình
-                bookingDto.getQrBase64() // QR Code dưới dạng Base64
-        );
+                """
+                .formatted(
+                        user.getUsername(), // Tên người dùng
+                        bookingDto.getId(), // Booking ID
+                        tour.getTitle(), // Tên tour
+                        bookingDto.getBookingDate(), // Ngày đặt
+                        bookingDto.getPaymentStatus(), // Trạng thái thanh toán
+                        bookingDto.getTotalPrice(), // Tổng tiền
+                        itineraryTable.toString(), // Bảng hành trình
+                        bookingDto.getQrBase64() // QR Code dưới dạng Base64
+                );
     }
 
     public void sendEmailReportToUser(String emailUser, Report report) throws Exception {
@@ -193,13 +195,14 @@ public class EmailService {
                     </div>
                 </body>
                 </html>
-                """.formatted(
-                report.getTourReport().getTitle(), // Tên tour
-                report.getId(), // Mã báo cáo
-                formattedDate, // Ngày báo cáo định dạng dd-MM-yyyy
-                formattedTime, // Thời gian định dạng HH:mm
-                lyDo.toString() // Danh sách lý do
-        );
+                """
+                .formatted(
+                        report.getTourReport().getTitle(), // Tên tour
+                        report.getId(), // Mã báo cáo
+                        formattedDate, // Ngày báo cáo định dạng dd-MM-yyyy
+                        formattedTime, // Thời gian định dạng HH:mm
+                        lyDo.toString() // Danh sách lý do
+                );
     }
 
     public void sendHostRegistrationPendingEmail(UserDTO userDto) throws Exception {
@@ -238,8 +241,9 @@ public class EmailService {
                         <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
                     </div>
                 </body>
-                </html> 
-                """.formatted(userDto.getUsername()); // Tên người dùng
+                </html>
+                """
+                .formatted(userDto.getUsername()); // Tên người dùng
     }
 
     public void sendTourStatusUpdateToHost(Tour tour) throws Exception {
@@ -302,13 +306,14 @@ public class EmailService {
                     </div>
                 </body>
                 </html>
-                """.formatted(
-                tour.getHost().getUsername(),  // Tên Host
-                tour.getTitle(),  // Tên Tour
-                tour.getId(),  // Mã Tour
-                tour.getTitle(),  // Tên Tour
-                statusDescription  // Trạng thái Tour
-        );
+                """
+                .formatted(
+                        tour.getHost().getUsername(), // Tên Host
+                        tour.getTitle(), // Tên Tour
+                        tour.getId(), // Mã Tour
+                        tour.getTitle(), // Tên Tour
+                        statusDescription // Trạng thái Tour
+                );
     }
 
     public void sendTourPostedToHost(Tour tour) throws Exception {
@@ -341,40 +346,104 @@ public class EmailService {
     private String buildTourPostedEmailContent(Tour tour) {
         // Tạo nội dung email HTML
         return """
-        <!DOCTYPE html>
-        <html lang="vi">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Thông báo tour mới</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
-            <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
-                <h1 style="color: #333;">Tour của bạn đã được đăng tải thành công!</h1>
-                <p>Xin chào <strong>%s</strong>,</p>
-                <p>Chúng tôi xin thông báo rằng tour <strong>%s</strong> của bạn đã được đăng tải thành công và hiện có sẵn trên hệ thống. Dưới đây là các chi tiết:</p>
-                <ul>
-                    <li><strong>Mã tour:</strong> %s</li>
-                    <li><strong>Tên tour:</strong> %s</li>
-                    <li><strong>Ngày khởi hành:</strong> %s</li>
-                    <li><strong>Trạng thái:</strong> %s</li>
-                    <li><strong>Mô tả tour:</strong> %s</li>
-                </ul>
-                <p style="color: #555;">Chúng tôi sẽ tiếp tục theo dõi và hỗ trợ nếu cần thiết. Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
-                <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
-            </div>
-        </body>
-        </html>
-        """.formatted(
-                tour.getHost().getUsername(),  // Tên Host
-                tour.getTitle(),  // Tên Tour
-                tour.getId(),  // Mã Tour
-                tour.getTitle(),  // Tên Tour
-                tour.getDepartureDate(),  // Ngày khởi hành
-                "Mới tạo",  // Trạng thái Tour, giả sử tour mới có trạng thái "Mới tạo"
-                tour.getDescription()  // Mô tả Tour
-        );
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Thông báo tour mới</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                        <h1 style="color: #333;">Tour của bạn đã được đăng tải thành công!</h1>
+                        <p>Xin chào <strong>%s</strong>,</p>
+                        <p>Chúng tôi xin thông báo rằng tour <strong>%s</strong> của bạn đã được đăng tải thành công và hiện có sẵn trên hệ thống. Dưới đây là các chi tiết:</p>
+                        <ul>
+                            <li><strong>Mã tour:</strong> %s</li>
+                            <li><strong>Tên tour:</strong> %s</li>
+                            <li><strong>Ngày khởi hành:</strong> %s</li>
+                            <li><strong>Trạng thái:</strong> %s</li>
+                            <li><strong>Mô tả tour:</strong> %s</li>
+                        </ul>
+                        <p style="color: #555;">Chúng tôi sẽ tiếp tục theo dõi và hỗ trợ nếu cần thiết. Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi qua email: support@tourbooking.com.</p>
+                        <p style="font-size: 14px; color: #999;">Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                    </div>
+                </body>
+                </html>
+                """
+                .formatted(
+                        tour.getHost().getUsername(), // Tên Host
+                        tour.getTitle(), // Tên Tour
+                        tour.getId(), // Mã Tour
+                        tour.getTitle(), // Tên Tour
+                        tour.getDepartureDate(), // Ngày khởi hành
+                        "Mới tạo", // Trạng thái Tour, giả sử tour mới có trạng thái "Mới tạo"
+                        tour.getDescription() // Mô tả Tour
+                );
     }
 
+    public void sendHostRegistrationApprovalPending(HostRegister hostRegister) throws Exception {
+        // Ensure that we have a valid email address to send the email to
+        if (hostRegister.getEmail() == null || hostRegister.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email address is required.");
+        }
+
+        // Create a MimeMessage for the email
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        // Set the recipient and the subject of the email
+        helper.setTo(hostRegister.getEmail());
+        helper.setSubject("Your Host Registration is Pending Approval");
+
+        // Build the content of the email
+        String emailContent = buildHostRegistrationApprovalPendingEmailContent(hostRegister);
+
+        // Set the content of the email (HTML format)
+        helper.setText(emailContent, true);
+
+        // Send the email
+        mailSender.send(mimeMessage);
+    }
+
+    // Helper method to build the HTML content for the registration pending approval
+    // email
+    private String buildHostRegistrationApprovalPendingEmailContent(HostRegister hostRegister) {
+        return """
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Thông báo đăng ký chờ duyệt</title>
+                </head>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f9f9f9;">
+                    <div style="max-width: 600px; margin: auto; background: #fff; padding: 20px; border: 1px solid #ddd;">
+                        <h1 style="color: #333;">Yêu cầu đăng ký của bạn đang chờ duyệt</h1>
+                        <p>Xin chào <strong>%s</strong>,</p>
+                        <p>Cảm ơn bạn đã đăng ký trở thành nhà cung cấp tour tại công ty chúng tôi. Yêu cầu đăng ký của bạn đang được xem xét và chờ duyệt.</p>
+                        <h2>Thông tin đăng ký:</h2>
+                        <ul>
+                            <li><strong>Tên người dùng:</strong> %s</li>
+                            <li><strong>CMND/CCCD:</strong> %s</li>
+                            <li><strong>Email:</strong> %s</li>
+                            <li><strong>Địa chỉ:</strong> %s</li>
+                            <li><strong>Số điện thoại:</strong> %s</li>
+                        </ul>
+                        <p>Nếu có bất kỳ thắc mắc hoặc cần thêm thông tin, vui lòng liên hệ qua email: support@tourbooking.com.</p>
+                        <p style="font-size: 14px; color: #999;">Trân trọng!</p>
+                    </div>
+                </body>
+                </html>
+                """
+                .formatted(
+                        hostRegister.getUsername(), // Tên người dùng
+                        hostRegister.getUsername(), // Tên người dùng
+                        hostRegister.getCin(), // CMND/CCCD
+                        hostRegister.getEmail(), // Email
+                        hostRegister.getAddress(), // Địa chỉ
+                        hostRegister.getPhoneNumber() // Số điện thoại
+                );
+    }
 
 }
