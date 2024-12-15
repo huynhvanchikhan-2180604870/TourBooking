@@ -12,6 +12,7 @@ public class DestinationDtoMapper {
         destinationDto.setId(destination.getId());
         destinationDto.setName(destination.getName());
         destinationDto.setTourCount(destination.getTourCount());
+        destinationDto.setUrl(destination.getUrl());
         return destinationDto;
     }
 

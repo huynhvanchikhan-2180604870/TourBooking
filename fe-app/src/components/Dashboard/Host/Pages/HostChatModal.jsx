@@ -9,73 +9,71 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import { WebSocketContext } from "../config/WebSocketContext";
+import { WebSocketContext } from "../../../../config/WebSocketContext";
+import { API_BASE_URL } from "../../../../config/api";
 import { useDispatch, useSelector } from "react-redux";
-import { sendMessages, addNewMessage, createSession, loadMessagesForSession, fetchSessionMessages } from "../store/Message/Action";
-import { API_BASE_URL } from "../config/api";
+import {
+  addNewMessage,
+  fetchSessionMessages,
+  loadMessagesForSession,
+  sendMessages,
+} from "../../../../store/Message/Action";
 
-function ChatModal({ open, handleClose, hostName, userName, hostId, userId }) {
+function HostChatModal({
+  open,
+  handleClose,
+  hostId,
+  hostName,
+  userId,
+  userName,
+  sessionId,
+}) {
   const wsConnection = useContext(WebSocketContext);
-  const [newMessage, setNewMessage] = useState('');
-  const [currentSessionId, setCurrentSessionId] = useState();
+  const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState([]);
   const { message } = useSelector((state) => state);
+
   const dispatch = useDispatch();
 
   // Tách riêng logic fetch messages
   const fetchMessages = useCallback(() => {
-    if (currentSessionId) {
-      dispatch(fetchSessionMessages(currentSessionId))
+    if (sessionId) {
+      dispatch(fetchSessionMessages(sessionId))
         .catch(err => console.error("Error fetching messages:", err));
     }
-  }, [currentSessionId, dispatch]);
-
-  // Fetch messages khi mở modal và có session
-  useEffect(() => {
-    if (open) {
-      const existingSession = message?.sessionsByHost?.[hostId];
-      if (existingSession) {
-        setCurrentSessionId(existingSession.id);
-      } else {
-        dispatch(createSession(hostId))
-          .then((data) => {
-            setCurrentSessionId(data.id);
-          })
-          .catch((error) => {
-            console.error("Error creating or retrieving session:", error);
-          });
-      }
-    }
-  }, [open, hostId, dispatch, message?.sessionsByHost]);
+  }, [sessionId, dispatch]);
 
   useEffect(() => {
-    if (open&&currentSessionId) {
+    if (open&&sessionId) {
       fetchMessages();
     }
-  }, [open, currentSessionId, fetchMessages]);
+  }, [open, sessionId, fetchMessages,]);
 
-  // WebSocket subscription
   useEffect(() => {
-    if (wsConnection && wsConnection.connected && currentSessionId) {
-      const topic = `/topic/messages/${currentSessionId}`;
-      const subscription = wsConnection.subscribe(topic, (message) => {
-        const messageBody = JSON.parse(message.body);
-        // Thay vì tải lại, thêm trực tiếp tin nhắn vào store
-        dispatch(addNewMessage(messageBody));
-      });
-      return () => {
-        if (subscription) subscription.unsubscribe();
-      };
-    }
-  }, [wsConnection, currentSessionId]);
+  if (wsConnection && wsConnection.connected && sessionId) {
+    const topic = `/topic/messages/${sessionId}`;
+    const subscription = wsConnection.subscribe(topic, (message) => {
+      const messageBody = JSON.parse(message.body);
+      dispatch(addNewMessage(messageBody));
+    });
+
+    // Đảm bảo gửi phản hồi pong khi nhận ping từ server để giữ kết nối WebSocket
+    wsConnection.on('ping', () => wsConnection.send('pong'));
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
+    };
+  }
+}, [wsConnection, sessionId, dispatch]);
 
   const sendMessage = () => {
-    if (!currentSessionId) return;
+    if (!sessionId) return;
 
     const values = {
       content: newMessage,
-      senderId: userId,
-      receiverId: hostId,
-      chatSession: currentSessionId,
+      senderId: hostId,
+      receiverId: userId,
+      chatSession: sessionId,
     };
 
     dispatch(sendMessages(values))
@@ -89,8 +87,6 @@ function ChatModal({ open, handleClose, hostName, userName, hostId, userId }) {
       });
   }
 
-  // Lọc tin nhắn theo session hiện tại
-  const sortedMessages = (message?.messagesRoom || []).sort((a, b) => new Date(b.sentAt) - new Date(a.sentAt));
   return (
     <Modal
       open={open}
@@ -116,29 +112,28 @@ function ChatModal({ open, handleClose, hostName, userName, hostId, userId }) {
         }}
       >
         <Typography variant="h6" component="h2" className="mb-4">
-          Chat with {hostName}
+          Chat with {userName}
         </Typography>
         <hr />
-
         <Box sx={{ flex: 1, overflow: "auto" }}>
           <List>
             {message?.messagesRoom?.map((msg, index) => {
-              const isUserSender = (msg.sender.id === userId);
+              const isHostSender =msg.sender.id  === hostId;
               return (
                 <ListItem
                   key={index}
                   sx={{
-                    justifyContent: isUserSender ? "flex-end" : "flex-start",
+                    justifyContent: isHostSender ? "flex-end" : "flex-start",
                   }}
                 >
                   <ListItemText
-                    primary={msg?.content}
+                    primary={msg.content}
                     sx={{
-                      background: isUserSender ? "#e0f7fa" : "#ffebee",
+                      background: isHostSender ? "#e0f7fa" : "#ffebee",
                       borderRadius: "10px",
                       padding: "6px 12px",
                       maxWidth: "75%",
-                      border: isUserSender ? "1px solid blue" : "1px solid red",
+                      border: isHostSender ? "1px solid blue" : "1px solid red",
                     }}
                   />
                 </ListItem>
@@ -146,7 +141,6 @@ function ChatModal({ open, handleClose, hostName, userName, hostId, userId }) {
             })}
           </List>
         </Box>
-
         <Box sx={{ mt: 2 }}>
           <TextField
             fullWidth
@@ -163,4 +157,4 @@ function ChatModal({ open, handleClose, hostName, userName, hostId, userId }) {
   );
 }
 
-export default ChatModal;
+export default HostChatModal;

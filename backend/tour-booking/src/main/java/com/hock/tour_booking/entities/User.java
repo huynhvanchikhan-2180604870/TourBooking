@@ -56,7 +56,12 @@ public class User{
     private String verify_code;
     @Column(name = "is_ban")
     private Boolean is_ban;
-
+    @ManyToMany
+    @JoinTable(name = "user_favorites",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="tour_id"))
+    @JsonIgnore
+    private Set<Tour> favoriteTours = new HashSet<>();
     @Override
     public String toString() {
         return "User {" +

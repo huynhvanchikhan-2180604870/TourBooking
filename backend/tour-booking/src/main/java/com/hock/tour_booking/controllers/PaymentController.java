@@ -74,7 +74,6 @@ public class PaymentController {
                                                      @RequestBody Map<String, Object> payload) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         String apptransid = (String) payload.get("apptransid");
-//        String qrBase64 = (String) payload.get("qrBase64");
         String qrBase64 = (String) payload.get("qrBase64");
         String appid = ZaloPayConfig.APP_ID;
         String key1 = ZaloPayConfig.KEY1;

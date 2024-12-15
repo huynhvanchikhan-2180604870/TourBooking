@@ -26,6 +26,7 @@ import {
   GET_TOURS_FAILURE,
   GET_TOURS_REQUEST,
   GET_TOURS_SUCCESS,
+  LOAD_FAVORITES_SUCCESS,
   POST_TOUR_REVIEW_FAILURE,
   POST_TOUR_REVIEW_REQUEST,
   POST_TOUR_REVIEW_SUCCESS,
@@ -108,19 +109,20 @@ const tourReducer = (state = initialState, action) => {
         loading: false,
         tours: action.payload,
       };
-    case ADD_TO_FAVORITES_SUCCESS:
+    case LOAD_FAVORITES_SUCCESS:
       return {
         ...state,
         loading: false,
-        favorites: [...state.favorites, action.payload],
+        favorites: action.payload,
       };
+    case ADD_TO_FAVORITES_SUCCESS:
     case REMOVE_FROM_FAVORITES_SUCCESS:
+      // Các action này đã load lại favorites trong action -> loadFavorites()
+      // nên state.favorites đã được cập nhật trong LOAD_FAVORITES_SUCCESS
+      // tại đây chỉ cần set loading = false
       return {
         ...state,
         loading: false,
-        favorites: state.favorites.filter(
-          (fav) => fav.id !== action.payload.id
-        ),
       };
     case POST_TOUR_REVIEW_SUCCESS:
       return {

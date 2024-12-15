@@ -46,6 +46,14 @@
     border-radius: 10px 0 9px;
 }
 
+.tour__img .favorite-icon {
+    position: absolute;
+    right: 10px;
+    bottom: -40px;
+    border: none;
+    outline: none;
+}
+
 .card__top span i {
     color: var(--secondary-color);
 }

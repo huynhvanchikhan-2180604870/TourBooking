@@ -18,4 +18,5 @@ public interface TourRepository extends JpaRepository<Tour, UUID>, JpaSpecificat
 
     @Query("select t from Tour t where t.host.id = ?1")
     public List<Tour> findTourByHost(UUID hostId);
+
 }

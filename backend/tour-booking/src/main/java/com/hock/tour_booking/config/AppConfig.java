@@ -1,10 +1,16 @@
 package com.hock.tour_booking.config;
 
 
+import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.hock.tour_booking.services.MessageService;
+import com.hock.tour_booking.utils.ChatSessionDeserializer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,9 +27,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -60,23 +68,23 @@ public class AppConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Arrays.asList(
-                        "http://localhost:3000",
-                        "http://hockitsystems.id.vn:3000",  // Thêm địa chỉ IP của máy chạy React
-                        "http://192.168.1.5:3000"  // Thêm địa chỉ IP của máy chạy React
-                ));
-                config.setAllowedMethods(Collections.singletonList("*"));
-                config.setAllowedHeaders(Collections.singletonList("*"));
-                config.setExposedHeaders(Collections.singletonList("Authorization"));
-                config.setAllowCredentials(true);
-                config.setMaxAge(3600L);
-                return config;
-            }
-        };
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://yourdomain.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);  // Set the time (in seconds) that the pre-flight request can be cached
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
+
+    @Bean
+    public Jackson2ObjectMapperBuilder jacksonBuilder() {
+        return new Jackson2ObjectMapperBuilder();
+    }
+
 }

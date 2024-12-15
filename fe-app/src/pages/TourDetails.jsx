@@ -296,7 +296,7 @@ const TourDetails = () => {
               >
                 <QuestionAnswerIcon style={{fontSize: '50px' ,color: '#FFCFB3'}}/>
               </Button>
-              <ChatModal open={showChatModal} hostName={tour?.tourDetails?.host?.username} userName={auth?.user?.username} handleClose={handleCloseChat} />
+              <ChatModal open={showChatModal} hostName={tour?.tourDetails?.host?.username} userName={auth?.user?.username} userId={auth?.user?.id} hostId={tour?.tourDetails?.host?.id} handleClose={handleCloseChat} />
             </Col>
           </Row>
         </Container>

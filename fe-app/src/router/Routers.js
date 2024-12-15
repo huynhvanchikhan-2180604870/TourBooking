@@ -19,6 +19,8 @@ import SeachResult from "./../pages/SearchResult";
 import TourDetails from "./../pages/TourDetails";
 import Tours from "./../pages/Tours";
 import RegisterHostsList from "../components/Dashboard/Admin/page/RegisterHostsList.jsx";
+import MessageManger from "../components/Dashboard/Host/Pages/MessageManger.jsx";
+import Favorities from "../pages/Favorities.jsx";
 
 const Routers = () => {
   return (
@@ -35,11 +37,13 @@ const Routers = () => {
         <Route path="/tours/search" element={<SeachResult />} />
         <Route path="/orders" element={<OrderHistory />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/favorite" element={<Favorities />} />
         <Route path="/dashboard" element={<DashboardHost />} />
         <Route path="/dashboard/tours" element={<TourHost />} />
         <Route path="/dashboard/support" element={<DashboardHost />} />
         <Route path="/dashboard/revenue" element={<Revenue />} />
         <Route path="/dashboard/orders_tracking" element={<OrderTracking />} />
+        <Route path="/dashboard/sessions" element={<MessageManger />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/tours" element={<ToursManager />} />
         <Route path="/admin/bookings" element={<BookingsList />} />

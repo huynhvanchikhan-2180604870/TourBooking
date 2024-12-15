@@ -20,6 +20,9 @@ public class Destination {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "url_image")
+    private String url;
+
     @OneToMany(mappedBy = "destination")
     private Set<Tour> tours; // Each destination has many tours
     // Constructors, getters, and setters as needed
