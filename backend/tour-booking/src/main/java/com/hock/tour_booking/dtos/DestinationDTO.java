@@ -9,4 +9,5 @@ public class DestinationDTO {
     private UUID id;
     private String name;
     private int tourCount;
+    private String url;
 }

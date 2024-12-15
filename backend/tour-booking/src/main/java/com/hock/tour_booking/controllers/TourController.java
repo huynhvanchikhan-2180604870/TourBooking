@@ -48,7 +48,7 @@ public class TourController {
         return new ResponseEntity<>(categories, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping()
+    @GetMapping(produces = "application/json;charset=UTF-8")
     public ResponseEntity<Page<TourDTO>> getTours(
             @RequestParam(required = false) String destination,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
@@ -63,7 +63,7 @@ public class TourController {
         return ResponseEntity.ok(tourDTOs);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json;charset=UTF-8")
     public ResponseEntity<TourDTO> findById(@PathVariable UUID id) throws Exception{
         Tour tour  = tourService.findTourById(id);
 
@@ -76,10 +76,17 @@ public class TourController {
         return new ResponseEntity<>(tourDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/destinations")
+    @GetMapping(value = "/destinations", produces = "application/json;charset=UTF-8")
     public ResponseEntity<List<DestinationDTO>> getDestinations(){
         List<Destination> destinations = destinationService.findAll();
         List<DestinationDTO> destinationDTOS = DestinationDtoMapper.toDestinationDtos(destinations);
         return new ResponseEntity<>(destinationDTOS, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(value = "/destinations/{id}/tours")
+    public ResponseEntity<?> findToursByDestinationId(@PathVariable UUID id){
+        List<Tour> tours = tourService.findTourByDestination(id);
+        List<TourDTO> tourDTOS = TourDtoMapper.tourDTOs(tours);
+        return new ResponseEntity<>(tourDTOS,HttpStatus.OK);
     }
 }

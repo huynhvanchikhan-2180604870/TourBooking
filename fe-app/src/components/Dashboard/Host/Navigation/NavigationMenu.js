@@ -32,7 +32,7 @@ export const navigationMenu = [
     icon: <CircleNotificationsIcon />,
     path: "/dashboard/support",
     subMenu: [
-      { title: "Help", path: "/support/help" },
+      { title: "Support", path: "/dashboard/sessions" },
       { title: "Contact", path: "/support/contact" },
     ], // Sub-menu for Supports
   },

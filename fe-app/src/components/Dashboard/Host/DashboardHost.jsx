@@ -7,6 +7,7 @@ import OrderTracking from "./Pages/OrderTracking";
 import Revenue from "./Pages/Revenue";
 import TourHost from "./Pages/TourHost";
 import "./share/style.css";
+import MessageManger from "./Pages/MessageManger";
 
 const DashboardHost = () => {
   const {auth} = useSelector((state) => state); // Access user data from Redux store
@@ -43,6 +44,7 @@ const DashboardHost = () => {
           <Route path="/tours" element={<TourHost />} />
           <Route path="/revenue" element={<Revenue />} />
           <Route path="/orders_tracking" element={<OrderTracking />} />
+          <Route path="/sessions" element={<MessageManger />} />
         </Routes>
       </div>
     </div>

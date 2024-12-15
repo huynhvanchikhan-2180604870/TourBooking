@@ -158,17 +158,7 @@ public class AuthenticationController {
                 User isEmailExist = userRepository.findByEmail(email);
                 CheckUserStatusResponse response_auth = new CheckUserStatusResponse();
                 if (isEmailExist != null) {
-                    // Kiểm tra trạng thái tài khoản người dùng
 
-//                    // Kiểm tra trạng thái cấm của người dùng
-//                    if (isEmailExist.getIs_ban()) {
-//                        response_auth.setMessage("Tài khoản bạn bị khóa vui lòng liên hệ hotline để được hổ trợ");
-//                        response_auth.setStatus(true);
-//                        return new ResponseEntity<>(response_auth, HttpStatus.OK);
-//                    } else {
-//                        response_auth.setMessage("Đăng nhập thành công");
-//                        response_auth.setStatus(false);
-//                    }
                     Authentication auth = new UsernamePasswordAuthenticationToken(email, email);  // Unreachable
                     SecurityContextHolder.getContext().setAuthentication(auth);
                     String jwt = jwtProvider.generateToken(auth);
@@ -206,30 +196,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(roleRepository.save(role));
     }
 
-//    @PostMapping("/register-host")
-//    public ResponseEntity<UserDTO> registerHost(@RequestBody UserRequets requets) throws Exception{
-//        User user = userRepository.findByEmail(requets.getEmail());
-//        if(user != null){
-//            return new ResponseEntity<UserDTO>(HttpStatus.BAD_REQUEST);
-//        }
-//        user.setAddress(requets.getAddress());
-//        user.setCin(requets.getCin());
-//        user.setEmail(requets.getEmail());
-//        user.setUsername(requets.getUsername());
-//        user.setPhone_number(requets.getPhone_number());
-//        user.setPassword_hash(passwordEncoder.encode(requets.getPassword()));
-//        user.setIs_active(false);
-//        User savUser = userService.registerHost(user);
-//        UserDTO userDTO = UserDtoMapper.toUserDto(savUser);
-//        emailService.sendHostRegistrationPendingEmail(userDTO);
-//        return new ResponseEntity<UserDTO>(userDTO, HttpStatus.CREATED);
-//    }
-
-
-    //    @PostMapping("/upgrade")
-//    public ResponseEntity<User> upgradeRole(@RequestBody AuthRequets authRequets){
-//        User user = authenticationService.authenticate(authRequets);
-//    }
     private Authentication authenticate(String email, String password) {
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 

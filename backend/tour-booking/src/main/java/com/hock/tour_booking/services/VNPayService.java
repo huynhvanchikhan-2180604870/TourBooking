@@ -42,7 +42,7 @@ public class VNPayService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(paymentRequest.getAmount()));
+        vnp_Params.put("vnp_Amount", String.valueOf(paymentRequest.getAmount() * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
 
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
@@ -103,7 +103,7 @@ public class VNPayService {
 //        payment.setTransactionId(zalopay_Params.get("apptransid").toString());
 //        Payment savePayment = paymentService.createPayment(payment);
         Map<String, Object> kq = new HashMap<String, Object>();
-
+        System.out.println("vnp_Params" + vnp_Params.toString());
         kq.put("orderurl", paymentUrl);
         kq.put("vnp_OrderInfo", vnp_Params.get("vnp_OrderInfo"));
         kq.put("vnp_Amount", vnp_Params.get("vnp_Amount"));
