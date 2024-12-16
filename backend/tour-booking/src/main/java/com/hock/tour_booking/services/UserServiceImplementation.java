@@ -238,4 +238,9 @@ public class UserServiceImplementation implements UserService {
         hostRegisterRepository.save(hostRegister);
         return save;
     }
+
+    @Override
+    public List<User>findAllByRole(String role){
+        return List.of();
+    }
 }

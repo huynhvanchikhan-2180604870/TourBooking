@@ -2,10 +2,7 @@ package com.hock.tour_booking.services;
 
 import com.hock.tour_booking.dtos.BookingDTO;
 import com.hock.tour_booking.dtos.UserDTO;
-import com.hock.tour_booking.entities.HostRegister;
-import com.hock.tour_booking.entities.Report;
-import com.hock.tour_booking.entities.Tour;
-import com.hock.tour_booking.entities.User;
+import com.hock.tour_booking.entities.*;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -445,5 +442,45 @@ public class EmailService {
                         hostRegister.getPhoneNumber() // Số điện thoại
                 );
     }
+
+    public void sendPromotionEmail(String toEmail, Promotion promotion) throws Exception {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(toEmail);
+        helper.setSubject("Khuyến mãi hấp dẫn: " + promotion.getDescription());
+
+        // Tạo nội dung HTML
+        String htmlContent = String.format(
+                "<html>" +
+                        "<head>" +
+                        "<style>" +
+                        "body {font-family: Arial, sans-serif;}" +
+                        "h1 {color: #333;}" +
+                        ".code {background-color: #f8d7da; color: #721c24; padding: 8px; font-size: 16px; border-radius: 4px;}" +
+                        "p {color: #666;}" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<h1>Khuyến mãi hấp dẫn!</h1>" +
+                        "<p>Xin chào,</p>" +
+                        "<p>Chúng tôi rất vui được thông báo về chương trình khuyến mãi mới: <strong>%s</strong>!</p>" +
+                        "<p>Hãy sử dụng mã khuyến mãi <span class='code'><strong>%s</strong></span> để nhận được mức giảm giá <strong>%s</strong>% cho đến ngày <strong>%s</strong>.</p>" +
+                        "<p>Áp dụng điều khoản và điều kiện.</p>" +
+                        "<p>Trân trọng,<br/>Đội ngũ của bạn</p>" +
+                        "</body>" +
+                        "</html>",
+                promotion.getDescription(),
+                promotion.getCode(),
+                promotion.getDiscountValue().toString(),
+                promotion.getEndDate().toString()
+        );
+
+        helper.setText(htmlContent, true); // True indicates HTML email
+        mailSender.send(mimeMessage);
+    }
+
+
+
 
 }
