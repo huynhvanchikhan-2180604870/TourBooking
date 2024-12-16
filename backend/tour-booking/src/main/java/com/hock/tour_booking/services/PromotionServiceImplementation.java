@@ -4,9 +4,12 @@ import com.hock.tour_booking.dtos.PromotionDTO;
 import com.hock.tour_booking.entities.Promotion;
 import com.hock.tour_booking.repositories.PromotionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
+@Service
 public class PromotionServiceImplementation implements PromotionService{
     @Autowired
     private PromotionRepository promotionRepository;
@@ -14,7 +17,7 @@ public class PromotionServiceImplementation implements PromotionService{
     @Override
     public Promotion savePromotion(PromotionDTO promotionDTO) {
         Promotion promotion = new Promotion();
-        promotion.setId(promotionDTO.getId());
+        promotion.setId(UUID.randomUUID());
         promotion.setCode(promotionDTO.getCode());
         promotion.setDescription(promotionDTO.getDescription());
         promotion.setDiscountType(promotionDTO.getDiscountType());

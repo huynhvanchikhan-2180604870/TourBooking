@@ -10,6 +10,7 @@ import RevenueStats from "./page/RevenueStats";
 import ToursManager from "./page/ToursManager";
 import UserManager from "./page/UserManager";
 import RegisterHostsList from "./page/RegisterHostsList";
+import PromotionsManager from "./page/PromotionsManager";
 
 const AdminDashboard = () => {
   const { auth } = useSelector((state) => state); // Access user data from Redux store
@@ -44,6 +45,8 @@ const AdminDashboard = () => {
           <Route path="/categories" element={<CategoriesManager />} />
           <Route path="/revenue" element={<RevenueStats />} />
           <Route path="/host-register" element={<RegisterHostsList />} />
+          <Route path="/notifications/promotions" element={<PromotionsManager />} />
+
         </Routes>
       </div>
     </div>

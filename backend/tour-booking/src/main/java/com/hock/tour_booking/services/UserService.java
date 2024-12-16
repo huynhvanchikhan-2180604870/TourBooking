@@ -22,4 +22,5 @@ public interface UserService {
     public List<User> findAll()throws Exception;
     public User findUserByEmail(String email)throws Exception;
     public  User addHost(HostRegister hostRegister)throws  Exception;
+    public List<User>findAllByRole(String role);
 }

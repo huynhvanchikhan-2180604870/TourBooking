@@ -21,6 +21,7 @@ import Tours from "./../pages/Tours";
 import RegisterHostsList from "../components/Dashboard/Admin/page/RegisterHostsList.jsx";
 import MessageManger from "../components/Dashboard/Host/Pages/MessageManger.jsx";
 import Favorities from "../pages/Favorities.jsx";
+import PromotionsManager from "../components/Dashboard/Admin/page/PromotionsManager.jsx";
 
 const Routers = () => {
   return (
@@ -49,6 +50,7 @@ const Routers = () => {
         <Route path="/admin/bookings" element={<BookingsList />} />
         <Route path="/admin/users" element={<UserManager />} />
         <Route path="/admin/host-register" element={<RegisterHostsList />} />
+        <Route path="/admin/notifications/promotions" element={<PromotionsManager />} />
       </Routes>
     </div>
   );
