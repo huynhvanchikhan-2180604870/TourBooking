@@ -61,9 +61,7 @@ public class FavoriteController {
         }
         List<Tour> favorites = favoriteService.getFavorites(user.getId()).stream().toList();
         List<TourDTO> dtos = TourDtoMapper.tourDTOs(favorites);
-        for (TourDTO i : dtos){
-            System.out.println(i.getTitle() + "da yeu thich");
-        }
+        
         return  new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 }

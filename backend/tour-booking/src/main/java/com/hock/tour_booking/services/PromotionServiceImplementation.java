@@ -32,4 +32,9 @@ public class PromotionServiceImplementation implements PromotionService{
     public List<Promotion> findAllPromotions() {
         return promotionRepository.findAll();
     }
+
+    @Override
+    public Promotion findByCode(String code){
+        return promotionRepository.findByCode(code);
+    }
 }
