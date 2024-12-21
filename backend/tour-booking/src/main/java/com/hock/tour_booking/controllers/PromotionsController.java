@@ -38,14 +38,14 @@ public class PromotionsController {
         List<User> users = userService.findAll();
         List<User> userRoleUser = new ArrayList<>();
 
-        for (User i : users){
-            if(i.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_USER"))){
+        for (User i : users) {
+            if (i.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_USER"))) {
                 userRoleUser.add(i);
             }
         }
         userRoleUser.forEach(o -> {
             try {
-                emailService.sendPromotionEmail(o .getEmail(), promotion);
+                emailService.sendPromotionEmail(o.getEmail(), promotion);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -63,5 +63,25 @@ public class PromotionsController {
         List<Promotion> promotions = promotionService.findAllPromotions();
 
         return new ResponseEntity<>(promotions, HttpStatus.OK);
+    }
+
+    @GetMapping("/check/{code}")
+    public ResponseEntity<?> checkPromotionValidity(@RequestHeader("Authorization") String jwt, @PathVariable String code) throws Exception {
+        User user = userService.findUserProfileByJwt(jwt);
+
+        if (user == null) {
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+
+        Promotion promotion = promotionService.findByCode(code);
+        if (promotion == null) {
+            return new ResponseEntity<>("Promotion code not found", HttpStatus.NOT_FOUND);
+        }
+
+        if (promotion.getEndDate().isBefore(java.time.LocalDate.now())) {
+            return new ResponseEntity<>("Promotion code has expired", HttpStatus.GONE);
+        }
+
+        return new ResponseEntity<>(promotion, HttpStatus.OK);
     }
 }

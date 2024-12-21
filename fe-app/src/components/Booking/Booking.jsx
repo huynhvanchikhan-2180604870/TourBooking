@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,12 +8,17 @@ import * as Yup from "yup";
 import { createBooking, createOrderPayment } from "../../store/Booking/Action";
 import { formatCurrency } from "../../utils/formatCurrency";
 import "./booking.css";
+import { API_BASE_URL } from "../../config/api";
+import { enqueueSnackbar } from "notistack";
 
 const validationSchema = Yup.object().shape({
   cin: Yup.string().required("Citizen Identification Number is required"),
   phone: Yup.string().required("Phone is required"),
 });
 const Booking = ({ tour, avgRating }) => {
+  const [promoCode, setPromoCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [promoError, setPromoError] = useState("");
   const navigate = useNavigate();
   const tour_id = useParams();
   const dispatch = useDispatch();
@@ -41,9 +46,67 @@ const Booking = ({ tour, avgRating }) => {
     },
   });
 
+  // Hàm check mã giảm giá
+  const checkPromoCode = async () => {
+    const jwt = localStorage.getItem("jwt");
+    if (!promoCode) {
+      setPromoError("Vui lòng nhập mã giảm giá");
+      return;
+    }
+
+    try {
+      const url = `${API_BASE_URL}/api/v2/promotions/check/${encodeURIComponent(
+        promoCode
+      )}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // data.discountValue là % giảm giá, ví dụ 10 => 10%
+        setDiscount(data.discountValue);
+        setPromoError("");
+      } else if (response.status === 410) {
+        // Mã giảm giá đã hết hạn
+        setPromoError("Mã giảm giá đã hết hạn");
+        enqueueSnackbar(`Mã giảm giá đã hết hạn`, {
+          variant: "error",
+        });
+      } else {
+        // Các lỗi khác
+        try {
+          const errorData = await response.json();
+          setPromoError(
+            errorData.message || "Mã giảm giá không hợp lệ hoặc đã hết hạn"
+          );
+          enqueueSnackbar(`Mã giảm giá không hợp lệ hoặc đã hết hạn`, {
+            variant: "error",
+          });
+        } catch (parseError) {
+          setPromoError("Lỗi khi xử lý phản hồi từ máy chủ");
+          enqueueSnackbar(`${promoError}`, {
+            variant: "error",
+          });
+        }
+      }
+    } catch (error) {
+      setPromoError("Lỗi kết nối mạng hoặc lỗi máy chủ");
+      enqueueSnackbar(`${error}`, {
+        variant: "error",
+      });
+    }
+  };
   const serviceFee = 10000;
-  const totalAmount =
-    Number(tour?.price) * Number(formik.values.guestSize) + Number(serviceFee);
+  // Tính tổng tiền
+  const totalBeforeDiscount =
+    Number(tour?.price) * Number(formik.values.guestSize) + serviceFee;
+  // discount là % => 10 => 10%
+  const discountAmount = totalBeforeDiscount * (discount / 100);
+  const totalAmount = totalBeforeDiscount - discountAmount;
 
   React.useEffect(() => {
     formik.setFieldValue("amount", totalAmount);
@@ -162,7 +225,7 @@ const Booking = ({ tour, avgRating }) => {
                 onChange={(e) => {
                   const newValue = Math.min(
                     Math.max(e.target.value, 1),
-                    tour?.ticketsRemaining || 1
+                    tour?.testticketsRemaining || 1
                   );
                   formik.setFieldValue("guestSize", newValue);
                 }}
@@ -193,6 +256,24 @@ const Booking = ({ tour, avgRating }) => {
             }
             label="Sử dụng thông tin đã đăng ký"
           />
+          <FormGroup className="d-flex justify-content-between">
+            {/* Phần ô nhập mã và nút Áp dụng */}
+
+            <input
+              type="text"
+              placeholder="Mã giảm giá"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              className="col-5 w-50" // nếu bạn muốn sử dụng style mặc định của Bootstrap
+            />
+            <button
+              type="button"
+              className="button__promotion col-5"
+              onClick={checkPromoCode}
+            >
+              Áp dụng
+            </button>
+          </FormGroup>
           {/* Phương thức thanh toán */}
           <FormGroup className="payment-method-group">
             <h5>Phương thức thanh toán:</h5>
@@ -247,6 +328,10 @@ const Booking = ({ tour, avgRating }) => {
                   <i className="ri-close-line"></i> 1 người
                 </h5>
                 <span>{formatCurrency(tour?.price)} vnđ</span>
+              </ListGroupItem>
+              <ListGroupItem className="border-0 px-0">
+                <h5>Giảm giá ({discount}%)</h5>
+                <span>- {formatCurrency(discountAmount)} vnđ</span>
               </ListGroupItem>
 
               <ListGroupItem className="border-0 px-0">
