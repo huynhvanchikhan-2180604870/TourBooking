@@ -2,11 +2,11 @@ export const uploadToCloudnary = async (pic) => {
   if (pic) {
     const data = new FormData();
     data.append("file", pic);
-    data.append("upload_preset", "tourbooking");
-    data.append("cloud_name", "dcc239rej");
+    data.append("upload_preset", "");
+    data.append("cloud_name", "");
     try {
       const response = await fetch(
-        "https://api.cloudinary.com/v1_1/dcc239rej/image/upload",
+        "https://api.cloudinary.com/v1_1//image/upload",
         {
         
           method: "post",

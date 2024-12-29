@@ -16,14 +16,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/profile")
+    @GetMapping(value = "/profile", produces = "application/json;charset=UTF-8")
     public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("Authorization") String jwt) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         UserDTO userDto = UserDtoMapper.toUserDto(user);
         return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/update")
+    @PostMapping(value = "/update", produces = "application/json;charset=UTF-8" )
     public ResponseEntity<UserDTO> updateUser(@RequestHeader("Authorization") String jwt, @RequestBody UserDTO userDto) throws Exception {
         User user = userService.findUserProfileByJwt(jwt);
         user.setUsername(userDto.getUsername());
@@ -35,7 +35,7 @@ public class UserController {
         return new ResponseEntity<>(userResponseDto, HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/change-password")
+    @PostMapping(value = "/change-password", produces = "application/json;charset=UTF-8")
     public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String jwt,
                                             @RequestBody ChangePasswordRequest request) {
         try {
