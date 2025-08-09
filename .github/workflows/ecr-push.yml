@@ -2,7 +2,14 @@ name: Build & Push to ECR
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'backend/tour-booking/**'
+      - '.github/workflows/ecr-push.yml'
   workflow_dispatch:
+
+env:
+  ECR_REPOSITORY: tourbooking-be
+  BACKEND_DIR: backend/tour-booking
 
 jobs:
   build-and-push:
@@ -10,17 +17,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Dockerfile multi-stage để build bằng JDK 23 (khớp project của bạn)
-      - name: Create Dockerfile
+      - name: Create Dockerfile in backend folder
+        working-directory: ${{ env.BACKEND_DIR }}
         run: |
           cat > Dockerfile <<'EOF'
           FROM maven:3.9-eclipse-temurin-23 AS build
           WORKDIR /src
           COPY pom.xml .
-          RUN mvn -q -e -DskipTests dependency:go-offline
-          COPY . .
-          RUN mvn -q clean package -DskipTests
-
+          COPY .mvn .mvn
+          COPY mvnw mvnw
+          RUN chmod +x mvnw
+          RUN ./mvnw -q -DskipTests dependency:go-offline
+          COPY src ./src
+          RUN ./mvnw -q clean package -DskipTests
           FROM eclipse-temurin:23-jre
           WORKDIR /app
           COPY --from=build /src/target/*.jar /app/app.jar
@@ -33,7 +42,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}   # <-- us-east-1 từ secret
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -42,9 +51,9 @@ jobs:
       - name: Build, tag, and push image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: tourbooking-be
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
           IMAGE_TAG: latest
         run: |
-          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f ${{ env.BACKEND_DIR }}/Dockerfile -t $ECR_REPOSITORY:$IMAGE_TAG ${{ env.BACKEND_DIR }}
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
